@@ -33,6 +33,9 @@ Never implement a requirement from the old SRS that contradicts anything written
    by a `purpose` value (`register` or `reset`), not by separate screens.
 4. **Phone SMS verification is out of scope** for Sprint 1 (no SMS gateway chosen).
 5. **The customer onboarding questionnaire is out of scope** for Sprint 1 (not designed).
+6. **Phone input accepts either `+970` or `+972`** as the country code (same Palestinian
+   number, two different international dialing codes for the same network), but the
+   number is always **normalized and stored as `+970XXXXXXXXX`** — see §9.
 
 ---
 
@@ -404,11 +407,17 @@ everywhere; never hand-build a response array in a controller.
 
 ### Phone numbers
 
-- Country code `+970` is fixed and cannot be changed or removed by the client.
-- 9 digits, starting with `59` or `56`.
-- Always normalize and store as `+970XXXXXXXXX`.
-- Server-side validation is mandatory: `/^\+970(59|56)\d{7}$/`
-- Implement as a reusable `PhoneRule`.
+- Country code is chosen from a fixed list only: `+970` or `+972` (same Palestinian
+  network, same local number — just two different international dialing codes for it).
+  No free-text prefix.
+- 9 digits, starting with `59` or `56`, regardless of which prefix was chosen.
+- **Always normalize and store as `+970XXXXXXXXX`**, regardless of which prefix the
+  client submitted — this prevents the same physical number from registering twice
+  (once as `+970...`, once as `+972...`) and bypassing the `unique` constraint.
+- Server-side validation is mandatory: accept `/^\+(970|972)(59|56)\d{7}$/` on input,
+  then normalize to `+970XXXXXXXXX` **before** any `unique` check or storage.
+- Implement as a reusable `PhoneRule` (validates) plus a normalization step (e.g. a
+  static helper or mutator) applied before persisting — never store the raw input.
 
 ### Passwords
 
