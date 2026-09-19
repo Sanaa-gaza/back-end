@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\ReferenceDataController;
@@ -25,3 +26,5 @@ Route::post('/auth/register/contractor', [RegisterController::class, 'contractor
 
 Route::post('/auth/verify-email', [VerificationController::class, 'verifyEmail']);
 Route::post('/auth/resend-code', [VerificationController::class, 'resendCode']);
+
+Route::post('/auth/login', [LoginController::class, 'login']);
