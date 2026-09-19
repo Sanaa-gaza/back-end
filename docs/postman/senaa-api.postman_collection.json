@@ -1123,6 +1123,123 @@
 							"body": "{\n  \"success\": false,\n  \"message\": \"الملف مطلوب.\",\n  \"errors\": {\n    \"file\": [\"الملف مطلوب.\"]\n  }\n}"
 						}
 					]
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/profile",
+							"host": ["{{base_url}}"],
+							"path": ["profile"]
+						},
+						"description": "Protected. Returns the authenticated user plus role-specific data (craftsman/institution/contractor) when applicable. Never includes id_selfie_path."
+					},
+					"response": [
+						{
+							"name": "200 Success (customer)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/profile",
+									"host": ["{{base_url}}"],
+									"path": ["profile"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 11,\n    \"full_name\": \"محمد أحمد\",\n    \"email\": \"mohammed@example.com\",\n    \"phone\": \"+970591234567\",\n    \"role\": \"customer\",\n    \"status\": \"active\",\n    \"national_id\": null,\n    \"governorate_id\": 1,\n    \"area_id\": 1,\n    \"email_verified_at\": \"2026-09-19T15:02:29.000000Z\"\n  },\n  \"message\": \"\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"full_name\": \"محمد أحمد الجديد\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/profile",
+							"host": ["{{base_url}}"],
+							"path": ["profile"]
+						},
+						"description": "Protected. Partial update — send only the fields you want to change. Editable: full_name, governorate_id + area_id (together), and role-specific fields — bio/personal_photo_path (craftsman), description (institution/contractor), main_specialization/workers_count (contractor). Locked fields (national_id, commercial_registration_number, craft_id, license_file_path) are silently ignored even if sent — they simply don't exist in this endpoint's accepted fields."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"full_name\": \"محمد أحمد الجديد\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/profile",
+									"host": ["{{base_url}}"],
+									"path": ["profile"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 11,\n    \"full_name\": \"محمد أحمد الجديد\",\n    \"email\": \"mohammed@example.com\",\n    \"phone\": \"+970591234567\",\n    \"role\": \"customer\",\n    \"status\": \"active\",\n    \"national_id\": null,\n    \"governorate_id\": 1,\n    \"area_id\": 1,\n    \"email_verified_at\": \"2026-09-19T15:02:29.000000Z\"\n  },\n  \"message\": \"تم تحديث الملف الشخصي بنجاح.\"\n}"
+						},
+						{
+							"name": "422 area_id does not belong to governorate_id",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"governorate_id\": 2,\n  \"area_id\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/profile",
+									"host": ["{{base_url}}"],
+									"path": ["profile"]
+								}
+							},
+							"status": "Unprocessable Content",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"عنوان السكن المختار لا يتبع للمحافظة المحددة.\",\n  \"errors\": {\n    \"area_id\": [\"عنوان السكن المختار لا يتبع للمحافظة المحددة.\"]\n  }\n}"
+						}
+					]
 				}
 			]
 		},
