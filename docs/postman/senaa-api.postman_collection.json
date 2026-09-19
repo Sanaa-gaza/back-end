@@ -316,6 +316,170 @@
 							"body": "{\n  \"success\": false,\n  \"message\": \"رقم الهوية يجب أن يتكون من 9 أرقام.\",\n  \"errors\": {\n    \"national_id\": [\"رقم الهوية يجب أن يتكون من 9 أرقام.\"]\n  }\n}"
 						}
 					]
+				},
+				{
+					"name": "Verify Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const body = pm.response.json();",
+									"    if (body.data && body.data.token) {",
+									"        pm.collectionVariables.set('token', body.data.token);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"code\": \"123456\",\n  \"purpose\": \"register\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/verify-email",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "verify-email"]
+						},
+						"description": "purpose=register on success sets email_verified_at, issues the Sanctum login token (auto-saved to {{token}} by the Tests script here), and logs the user in. purpose=reset on success returns a short-lived reset_token instead (not a login token) — used by Reset Password. Get the real code from storage/logs/laravel.log locally (MAIL_MAILER=log)."
+					},
+					"response": [
+						{
+							"name": "200 Success (register)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"code\": \"123456\",\n  \"purpose\": \"register\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/verify-email",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "verify-email"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"token\": \"1|M78XjOcV8vizcekHw8EKC6TrNQ2LCH7WDfBfAD5e26a8f156\",\n    \"user\": {\n      \"id\": 6,\n      \"full_name\": \"محمد أحمد\",\n      \"email\": \"mohammed@example.com\",\n      \"phone\": \"+970591234567\",\n      \"role\": \"customer\",\n      \"status\": \"active\",\n      \"governorate_id\": 1,\n      \"area_id\": 1,\n      \"email_verified_at\": \"2026-09-19T13:44:09.000000Z\"\n    }\n  },\n  \"message\": \"تم تأكيد البريد الإلكتروني بنجاح.\"\n}"
+						},
+						{
+							"name": "422 Wrong or expired code",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"code\": \"000000\",\n  \"purpose\": \"register\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/verify-email",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "verify-email"]
+								}
+							},
+							"status": "Unprocessable Content",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"الكود غير صحيح أو منتهي الصلاحية.\",\n  \"errors\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "Resend Code",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"purpose\": \"register\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/resend-code",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "resend-code"]
+						},
+						"description": "Subject to §6.3: 45-second cooldown and 3 sends/hour per email+purpose. Wrong verify-email attempts never count against this limit — only actual sends do."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"purpose\": \"register\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/resend-code",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "resend-code"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"تم إرسال كود جديد إلى بريدك الإلكتروني.\"\n}"
+						},
+						{
+							"name": "429 Cooldown / limit reached",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"purpose\": \"register\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/resend-code",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "resend-code"]
+								}
+							},
+							"status": "Too Many Requests",
+							"code": 429,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"الرجاء الانتظار 45 ثانية قبل طلب كود جديد.\",\n  \"errors\": []\n}"
+						}
+					]
 				}
 			]
 		},

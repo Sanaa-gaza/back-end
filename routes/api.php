@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\ReferenceDataController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Http\Request;
@@ -21,3 +22,6 @@ Route::post('/auth/register/customer', [RegisterController::class, 'customer']);
 Route::post('/auth/register/craftsman', [RegisterController::class, 'craftsman']);
 Route::post('/auth/register/institution', [RegisterController::class, 'institution']);
 Route::post('/auth/register/contractor', [RegisterController::class, 'contractor']);
+
+Route::post('/auth/verify-email', [VerificationController::class, 'verifyEmail']);
+Route::post('/auth/resend-code', [VerificationController::class, 'resendCode']);
