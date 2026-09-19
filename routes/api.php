@@ -19,3 +19,4 @@ Route::post('/uploads', [UploadController::class, 'store']);
 
 Route::post('/auth/register/customer', [RegisterController::class, 'customer']);
 Route::post('/auth/register/craftsman', [RegisterController::class, 'craftsman']);
+Route::post('/auth/register/institution', [RegisterController::class, 'institution']);
