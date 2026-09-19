@@ -168,6 +168,80 @@
 							"body": "{\n  \"success\": false,\n  \"message\": \"الصورة الشخصية غير موجودة. الرجاء رفعها أولاً عبر /api/uploads.\",\n  \"errors\": {\n    \"personal_photo_path\": [\"الصورة الشخصية غير موجودة. الرجاء رفعها أولاً عبر /api/uploads.\"],\n    \"id_selfie_path\": [\"صورة الهوية غير موجودة. الرجاء رفعها أولاً عبر /api/uploads.\"]\n  }\n}"
 						}
 					]
+				},
+				{
+					"name": "Register Institution",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type_id\": 1,\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"description\": \"مؤسسة خيرية تعمل في قطاع غزة.\",\n  \"terms_accepted\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register/institution",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register", "institution"]
+						},
+						"description": "One request for both wizard steps (screens 6+7). license_file_path must be a real path already returned by POST /api/uploads. activity_type_id currently has no seeded data (content will be managed later via an admin dashboard) — ask a backend dev for a valid id to test against, or create one via tinker locally."
+					},
+					"response": [
+						{
+							"name": "201 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type_id\": 1,\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"description\": \"مؤسسة خيرية تعمل في قطاع غزة.\",\n  \"terms_accepted\": true\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/register/institution",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "register", "institution"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"i***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
+						},
+						{
+							"name": "422 Validation error (duplicate commercial registration number)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution2@example.com\",\n  \"phone\": \"+970591234568\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type_id\": 1,\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"terms_accepted\": true\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/register/institution",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "register", "institution"]
+								}
+							},
+							"status": "Unprocessable Content",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"رقم التسجيل التجاري مستخدم بالفعل.\",\n  \"errors\": {\n    \"commercial_registration_number\": [\"رقم التسجيل التجاري مستخدم بالفعل.\"]\n  }\n}"
+						}
+					]
 				}
 			]
 		},
