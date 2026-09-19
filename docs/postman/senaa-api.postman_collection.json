@@ -214,7 +214,90 @@
 		},
 		{
 			"name": "Profile",
-			"item": []
+			"item": [
+				{
+					"name": "Upload File",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/uploads",
+							"host": ["{{base_url}}"],
+							"path": ["uploads"]
+						},
+						"description": "Open to guests — used during the registration wizard to upload photos/documents before the account exists. The returned `path` is what gets sent as e.g. `personal_photo_path` in the registration request body. Max 10 MB; JPG/PNG/PDF only (checked by actual content, not extension)."
+					},
+					"response": [
+						{
+							"name": "201 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{ "key": "file", "type": "file", "src": [] }
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/uploads",
+									"host": ["{{base_url}}"],
+									"path": ["uploads"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"path\": \"uploads/q1Qy2uXlOYOSyxrfEbQTxFdkb49VOZvdNUYFjmkh.jpg\",\n    \"url\": \"http://localhost:8000/storage/uploads/q1Qy2uXlOYOSyxrfEbQTxFdkb49VOZvdNUYFjmkh.jpg\"\n  },\n  \"message\": \"تم رفع الملف بنجاح.\"\n}"
+						},
+						{
+							"name": "422 Validation error (missing file / wrong type / too large)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{base_url}}/uploads",
+									"host": ["{{base_url}}"],
+									"path": ["uploads"]
+								}
+							},
+							"status": "Unprocessable Content",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"الملف مطلوب.\",\n  \"errors\": {\n    \"file\": [\"الملف مطلوب.\"]\n  }\n}"
+						}
+					]
+				}
+			]
 		},
 		{
 			"name": "Admin",
