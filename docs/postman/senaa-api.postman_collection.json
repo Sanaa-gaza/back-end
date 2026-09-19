@@ -622,6 +622,107 @@
 							"body": "{\n  \"success\": false,\n  \"message\": \"الحساب مقفل مؤقتاً بسبب محاولات دخول فاشلة متكررة. الرجاء المحاولة لاحقاً.\",\n  \"errors\": []\n}"
 						}
 					]
+				},
+				{
+					"name": "Me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "me"]
+						},
+						"description": "Protected: requires auth:sanctum + verified.email + active.account. Returns the authenticated user's data."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/auth/me",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "me"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 8,\n    \"full_name\": \"محمد أحمد\",\n    \"email\": \"mohammed@example.com\",\n    \"phone\": \"+970591234567\",\n    \"role\": \"customer\",\n    \"status\": \"active\",\n    \"governorate_id\": 1,\n    \"area_id\": 1,\n    \"email_verified_at\": \"2026-09-19T14:23:34.000000Z\"\n  },\n  \"message\": \"\"\n}"
+						},
+						{
+							"name": "401 No token",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/auth/me",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "me"]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"غير مصرح بالوصول. الرجاء تسجيل الدخول.\",\n  \"errors\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "logout"]
+						},
+						"description": "Protected. Revokes only the token used for this request (not every session/device)."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/auth/logout",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "logout"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"تم تسجيل الخروج بنجاح.\"\n}"
+						}
+					]
 				}
 			]
 		},

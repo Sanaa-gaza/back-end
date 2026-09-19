@@ -18,7 +18,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'verified.email' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+            'active.account' => \App\Http\Middleware\EnsureAccountIsActive::class,
+        ]);
+
+        // This is an API-only app with no web login route. Laravel's default
+        // guest redirect (ApplicationBuilder) points to route('login'), which
+        // doesn't exist here and throws for any unauthenticated non-JSON
+        // request. Disable the redirect so it falls through to a clean 401.
+        $middleware->redirectGuestsTo(fn () => null);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Every API response follows the {success, data|errors, message} envelope
