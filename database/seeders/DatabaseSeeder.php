@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             GovernorateSeeder::class,
             AreaSeeder::class,
             ServiceSeeder::class,
+            AdminSeeder::class,
         ]);
 
         $area = Area::first();
