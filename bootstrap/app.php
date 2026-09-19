@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'verified.email' => \App\Http\Middleware\EnsureEmailIsVerified::class,
             'active.account' => \App\Http\Middleware\EnsureAccountIsActive::class,
+            'role' => \App\Http\Middleware\EnsureUserHasRole::class,
         ]);
 
         // This is an API-only app with no web login route. Laravel's default

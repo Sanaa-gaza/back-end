@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Admin\AdminAccountController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerificationController;
@@ -36,3 +37,10 @@ Route::middleware(['auth:sanctum', 'verified.email', 'active.account'])->group(f
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
 });
+
+Route::middleware(['auth:sanctum', 'verified.email', 'active.account', 'role:admin'])
+    ->prefix('admin')
+    ->group(function () {
+        Route::get('/accounts/pending', [AdminAccountController::class, 'pending']);
+        Route::get('/accounts/{type}/{id}', [AdminAccountController::class, 'show']);
+    });
