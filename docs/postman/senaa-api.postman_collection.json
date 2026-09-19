@@ -8,7 +8,7 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://localhost:8000/api",
+			"value": "http://localhost/sanaa/public/api",
 			"type": "string"
 		},
 		{
@@ -20,7 +20,82 @@
 	"item": [
 		{
 			"name": "Auth",
-			"item": []
+			"item": [
+				{
+					"name": "Register Customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"full_name\": \"محمد أحمد\",\n  \"email\": \"mohammed@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"terms_accepted\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register/customer",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register", "customer"]
+						},
+						"description": "Creates the account with email_verified_at = NULL and sends a 6-digit code (purpose=register) to the email. No token is returned here — call Verify Email next with the code (check storage/logs/laravel.log locally, since MAIL_MAILER=log) to receive the login token. phone accepts +970 or +972; it is normalized to +970XXXXXXXXX before storage."
+					},
+					"response": [
+						{
+							"name": "201 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"full_name\": \"محمد أحمد\",\n  \"email\": \"mohammed@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"terms_accepted\": true\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/register/customer",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "register", "customer"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"m***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
+						},
+						{
+							"name": "422 Validation error (duplicate email)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"full_name\": \"محمد أحمد\",\n  \"email\": \"mohammed@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"terms_accepted\": true\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/register/customer",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "register", "customer"]
+								}
+							},
+							"status": "Unprocessable Content",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"هذا البريد الإلكتروني مستخدم بالفعل.\",\n  \"errors\": {\n    \"email\": [\"هذا البريد الإلكتروني مستخدم بالفعل.\"]\n  }\n}"
+						}
+					]
+				}
+			]
 		},
 		{
 			"name": "Password Reset",

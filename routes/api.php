@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ReferenceDataController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Http\Request;
@@ -15,3 +16,5 @@ Route::get('/services', [ReferenceDataController::class, 'services']);
 Route::get('/activity-types', [ReferenceDataController::class, 'activityTypes']);
 
 Route::post('/uploads', [UploadController::class, 'store']);
+
+Route::post('/auth/register/customer', [RegisterController::class, 'customer']);
