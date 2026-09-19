@@ -480,6 +480,148 @@
 							"body": "{\n  \"success\": false,\n  \"message\": \"الرجاء الانتظار 45 ثانية قبل طلب كود جديد.\",\n  \"errors\": []\n}"
 						}
 					]
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const body = pm.response.json();",
+									"    if (body.data && body.data.token) {",
+									"        pm.collectionVariables.set('token', body.data.token);",
+									"    }",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"password\": \"Str0ng!Pass\",\n  \"remember\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						},
+						"description": "email_verified_at is checked before anything else — an unverified account gets a 403 with a fresh code sent, not a credentials error. 5 consecutive wrong passwords lock the account for 15 minutes (423). remember=true issues a 30-day token instead of the default 24-hour one. Auto-saves the token to {{token}} on success."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"password\": \"Str0ng!Pass\",\n  \"remember\": false\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/login",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "login"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"token\": \"3|bnG3nCMGiU5qO3JPPhNpAfRIVugHgP9DFRX3lh5v88e97203\",\n    \"user\": {\n      \"id\": 7,\n      \"full_name\": \"محمد أحمد\",\n      \"email\": \"mohammed@example.com\",\n      \"phone\": \"+970591234567\",\n      \"role\": \"customer\",\n      \"status\": \"active\",\n      \"governorate_id\": 1,\n      \"area_id\": 1,\n      \"email_verified_at\": \"2026-09-19T13:52:14.000000Z\"\n    }\n  },\n  \"message\": \"تم تسجيل الدخول بنجاح.\"\n}"
+						},
+						{
+							"name": "401 Wrong credentials (generic)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"password\": \"WrongPass1!\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/login",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "login"]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"البريد الإلكتروني أو كلمة المرور غير صحيحة.\",\n  \"errors\": []\n}"
+						},
+						{
+							"name": "403 Unverified email",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"unverified@example.com\",\n  \"password\": \"Str0ng!Pass\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/login",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "login"]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"الرجاء تأكيد بريدك الإلكتروني أولاً. تم إرسال كود تحقق جديد.\",\n  \"errors\": [],\n  \"data\": {\n    \"requires_verification\": true,\n    \"email\": \"unverified@example.com\"\n  }\n}"
+						},
+						{
+							"name": "423 Account locked",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"password\": \"Str0ng!Pass\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/login",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "login"]
+								}
+							},
+							"status": "Locked",
+							"code": 423,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"الحساب مقفل مؤقتاً بسبب محاولات دخول فاشلة متكررة. الرجاء المحاولة لاحقاً.\",\n  \"errors\": []\n}"
+						}
+					]
 				}
 			]
 		},
