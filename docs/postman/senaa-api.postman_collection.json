@@ -1,0 +1,224 @@
+{
+	"info": {
+		"_postman_id": "5f5a1e3a-9c1f-4b7a-9d5a-senaa-api-0001",
+		"name": "Senaa API",
+		"description": "Senaa marketplace API — Sprint 1 (authentication and registration). See docs/sprint-1-backend.md for the full backend specification.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": []
+		},
+		{
+			"name": "Password Reset",
+			"item": []
+		},
+		{
+			"name": "Reference Data",
+			"item": [
+				{
+					"name": "List Governorates",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/governorates",
+							"host": ["{{base_url}}"],
+							"path": ["governorates"]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/governorates",
+									"host": ["{{base_url}}"],
+									"path": ["governorates"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": [\n    { \"id\": 1, \"name\": \"شمال غزة\" },\n    { \"id\": 2, \"name\": \"غزة\" },\n    { \"id\": 3, \"name\": \"دير البلح\" },\n    { \"id\": 4, \"name\": \"خان يونس\" },\n    { \"id\": 5, \"name\": \"رفح\" }\n  ],\n  \"message\": \"\"\n}"
+						}
+					]
+				},
+				{
+					"name": "List Areas by Governorate",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/governorates/1/areas",
+							"host": ["{{base_url}}"],
+							"path": ["governorates", "1", "areas"]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/governorates/1/areas",
+									"host": ["{{base_url}}"],
+									"path": ["governorates", "1", "areas"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": [\n    { \"id\": 1, \"governorate_id\": 1, \"name\": \"بيت لاهيا\" },\n    { \"id\": 2, \"governorate_id\": 1, \"name\": \"بيت حانون\" },\n    { \"id\": 3, \"governorate_id\": 1, \"name\": \"جباليا\" },\n    { \"id\": 4, \"governorate_id\": 1, \"name\": \"أم النصر\" }\n  ],\n  \"message\": \"\"\n}"
+						},
+						{
+							"name": "404 Governorate not found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/governorates/999/areas",
+									"host": ["{{base_url}}"],
+									"path": ["governorates", "999", "areas"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"المحافظة غير موجودة.\",\n  \"errors\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "List Services",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/services",
+							"host": ["{{base_url}}"],
+							"path": ["services"]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/services",
+									"host": ["{{base_url}}"],
+									"path": ["services"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": [\n    { \"id\": 1, \"name\": \"سباك\" },\n    { \"id\": 2, \"name\": \"كهربائي\" },\n    { \"id\": 3, \"name\": \"فني تكييف\" }\n  ],\n  \"message\": \"\"\n}"
+						}
+					]
+				},
+				{
+					"name": "List Activity Types",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/activity-types",
+							"host": ["{{base_url}}"],
+							"path": ["activity-types"]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success (empty until seeded via admin dashboard)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/activity-types",
+									"host": ["{{base_url}}"],
+									"path": ["activity-types"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Profile",
+			"item": []
+		},
+		{
+			"name": "Admin",
+			"item": []
+		}
+	]
+}
