@@ -728,7 +728,130 @@
 		},
 		{
 			"name": "Password Reset",
-			"item": []
+			"item": [
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"mohammed@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/forgot-password",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "forgot-password"]
+						},
+						"description": "Always returns the same neutral message, whether or not the email is registered — never reveals account existence. If registered, a purpose=reset code is sent (check storage/logs/laravel.log locally). Next step: Verify Email with purpose=reset to get a reset_token, then Reset Password."
+					},
+					"response": [
+						{
+							"name": "200 Success (same for any email)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"mohammed@example.com\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/forgot-password",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "forgot-password"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"إذا كان البريد الإلكتروني مسجلاً لدينا، سيصلك كود لاستعادة كلمة المرور.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reset_token\": \"paste the reset_token from Verify Email (purpose=reset) here\",\n  \"password\": \"NewStr0ng!Pass\",\n  \"password_confirmation\": \"NewStr0ng!Pass\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/reset-password",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "reset-password"]
+						},
+						"description": "reset_token comes from Verify Email's purpose=reset response, is valid for 10 minutes, and single-use. On success, every existing token/session for the user is revoked — they must log in again."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"reset_token\": \"JoMIlwyvWA6aPvuChrPRICb2sOS4MSLg7QKNHp3bolrQQhhJRYXqEnxcmcV0ygO2\",\n  \"password\": \"NewStr0ng!Pass\",\n  \"password_confirmation\": \"NewStr0ng!Pass\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/reset-password",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "reset-password"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"تم تغيير كلمة المرور بنجاح. الرجاء تسجيل الدخول من جديد.\"\n}"
+						},
+						{
+							"name": "422 Invalid or expired token",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"reset_token\": \"not-a-real-token\",\n  \"password\": \"NewStr0ng!Pass\",\n  \"password_confirmation\": \"NewStr0ng!Pass\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/reset-password",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "reset-password"]
+								}
+							},
+							"status": "Unprocessable Content",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"رمز الاستعادة غير صالح أو منتهي الصلاحية.\",\n  \"errors\": []\n}"
+						}
+					]
+				}
+			]
 		},
 		{
 			"name": "Reference Data",
