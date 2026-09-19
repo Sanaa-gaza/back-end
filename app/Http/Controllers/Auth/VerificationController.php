@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ResendCodeRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\VerifyEmailRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -72,5 +74,39 @@ class VerificationController extends Controller
         $this->otpService->generateAndSend($request->email, $request->purpose);
 
         return $this->success([], 'تم إرسال كود جديد إلى بريدك الإلكتروني.');
+    }
+
+    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
+    {
+        $user = User::where('email', $request->email)->first();
+
+        if ($user) {
+            $this->otpService->generateAndSend($user->email, 'reset');
+        }
+
+        return $this->success(
+            [],
+            'إذا كان البريد الإلكتروني مسجلاً لدينا، سيصلك كود لاستعادة كلمة المرور.'
+        );
+    }
+
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
+    {
+        $email = Cache::pull(self::RESET_TOKEN_CACHE_PREFIX.hash('sha256', $request->reset_token));
+
+        if (! $email) {
+            return $this->error('رمز الاستعادة غير صالح أو منتهي الصلاحية.', [], 422);
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if (! $user) {
+            return $this->error('رمز الاستعادة غير صالح أو منتهي الصلاحية.', [], 422);
+        }
+
+        $user->update(['password' => $request->password]);
+        $user->tokens()->delete();
+
+        return $this->success([], 'تم تغيير كلمة المرور بنجاح. الرجاء تسجيل الدخول من جديد.');
     }
 }
