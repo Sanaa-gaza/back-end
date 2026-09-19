@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Area;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -21,11 +22,13 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
         ]);
 
-        // User::factory(10)->create();
+        $area = Area::first();
 
         User::factory()->create([
-            'name' => 'Test User',
+            'full_name' => 'Test User',
             'email' => 'test@example.com',
+            'governorate_id' => $area->governorate_id,
+            'area_id' => $area->id,
         ]);
     }
 }

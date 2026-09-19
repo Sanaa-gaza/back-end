@@ -13,18 +13,27 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('full_name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('phone')->unique();
             $table->string('password');
+            $table->enum('role', ['customer', 'craftsman', 'institution', 'contractor', 'admin']);
+            $table->string('national_id')->unique()->nullable();
+            $table->foreignId('governorate_id')->constrained('governorates');
+            $table->foreignId('area_id')->constrained('areas');
+            $table->enum('status', ['active', 'suspended'])->default('active');
+            $table->string('suspension_reason')->nullable();
+            $table->unsignedInteger('failed_attempts')->default(0);
+            $table->timestamp('locked_until')->nullable();
+            $table->timestamp('last_login_at')->nullable();
+            $table->timestamp('terms_accepted_at')->nullable();
+            $table->string('terms_version')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('phone_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
-        });
 
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
+            $table->index('role');
         });
 
         Schema::create('sessions', function (Blueprint $table) {
@@ -43,7 +52,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }
 };

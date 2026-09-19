@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Area;
+use App\Models\Governorate;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -25,10 +27,16 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'full_name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
+            'phone' => '+970'.fake()->randomElement(['59', '56']).fake()->unique()->numerify('#######'),
             'password' => static::$password ??= Hash::make('password'),
+            'role' => 'customer',
+            'governorate_id' => Governorate::factory(),
+            'area_id' => Area::factory(),
+            'terms_accepted_at' => now(),
+            'terms_version' => '1.0',
+            'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ];
     }
