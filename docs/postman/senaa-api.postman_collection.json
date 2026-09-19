@@ -242,6 +242,80 @@
 							"body": "{\n  \"success\": false,\n  \"message\": \"رقم التسجيل التجاري مستخدم بالفعل.\",\n  \"errors\": {\n    \"commercial_registration_number\": [\"رقم التسجيل التجاري مستخدم بالفعل.\"]\n  }\n}"
 						}
 					]
+				},
+				{
+					"name": "Register Contractor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"full_name\": \"أحمد محمود سالم عبدالله\",\n  \"national_id\": \"123456789\",\n  \"email\": \"contractor@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"workers_count\": 15,\n  \"main_specialization\": \"بناء وتشييد\",\n  \"description\": \"مقاول بخبرة واسعة.\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"terms_accepted\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register/contractor",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register", "contractor"]
+						},
+						"description": "One request for all three wizard steps (screens 8+9+10). license_file_path must be a real path already returned by POST /api/uploads. national_id is 9 digits and unique — collected only for contractors."
+					},
+					"response": [
+						{
+							"name": "201 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"full_name\": \"أحمد محمود سالم عبدالله\",\n  \"national_id\": \"123456789\",\n  \"email\": \"contractor@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"workers_count\": 15,\n  \"main_specialization\": \"بناء وتشييد\",\n  \"description\": \"مقاول بخبرة واسعة.\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"terms_accepted\": true\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/register/contractor",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "register", "contractor"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"c***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
+						},
+						{
+							"name": "422 Validation error (invalid national_id length)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"full_name\": \"أحمد محمود سالم عبدالله\",\n  \"national_id\": \"12345\",\n  \"email\": \"contractor2@example.com\",\n  \"phone\": \"+970591234568\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"workers_count\": 15,\n  \"main_specialization\": \"بناء وتشييد\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"terms_accepted\": true\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/register/contractor",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "register", "contractor"]
+								}
+							},
+							"status": "Unprocessable Content",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": false,\n  \"message\": \"رقم الهوية يجب أن يتكون من 9 أرقام.\",\n  \"errors\": {\n    \"national_id\": [\"رقم الهوية يجب أن يتكون من 9 أرقام.\"]\n  }\n}"
+						}
+					]
 				}
 			]
 		},

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterContractorRequest;
 use App\Http\Requests\RegisterCraftsmanRequest;
 use App\Http\Requests\RegisterCustomerRequest;
 use App\Http\Requests\RegisterInstitutionRequest;
+use App\Models\Contractor;
 use App\Models\Craftsman;
 use App\Models\Institution;
 use App\Models\User;
@@ -99,6 +101,43 @@ class RegisterController extends Controller
                 'institution_name' => $request->institution_name,
                 'commercial_registration_number' => $request->commercial_registration_number,
                 'activity_type_id' => $request->activity_type_id,
+                'license_file_path' => $request->license_file_path,
+                'description' => $request->description,
+                'status' => 'pending',
+            ]);
+
+            return $user;
+        });
+
+        $this->otpService->generateAndSend($user->email, 'register');
+
+        return $this->success(
+            ['email' => $this->maskEmail($user->email)],
+            'تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.',
+            201
+        );
+    }
+
+    public function contractor(RegisterContractorRequest $request): JsonResponse
+    {
+        $user = DB::transaction(function () use ($request) {
+            $user = User::create([
+                'full_name' => $request->full_name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'password' => $request->password,
+                'role' => 'contractor',
+                'national_id' => $request->national_id,
+                'governorate_id' => $request->governorate_id,
+                'area_id' => $request->area_id,
+                'terms_accepted_at' => now(),
+                'terms_version' => '1.0',
+            ]);
+
+            Contractor::create([
+                'user_id' => $user->id,
+                'workers_count' => $request->workers_count,
+                'main_specialization' => $request->main_specialization,
                 'license_file_path' => $request->license_file_path,
                 'description' => $request->description,
                 'status' => 'pending',
