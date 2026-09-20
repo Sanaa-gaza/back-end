@@ -43,4 +43,8 @@ Route::middleware(['auth:sanctum', 'verified.email', 'active.account', 'role:adm
     ->group(function () {
         Route::get('/accounts/pending', [AdminAccountController::class, 'pending']);
         Route::get('/accounts/{type}/{id}', [AdminAccountController::class, 'show']);
+        Route::post('/accounts/{type}/{id}/approve', [AdminAccountController::class, 'approve']);
+        Route::post('/accounts/{type}/{id}/reject', [AdminAccountController::class, 'reject']);
+        Route::post('/accounts/{type}/{id}/suspend', [AdminAccountController::class, 'suspend']);
+        Route::post('/accounts/{type}/{id}/activate', [AdminAccountController::class, 'activate']);
     });

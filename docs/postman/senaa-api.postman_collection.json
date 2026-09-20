@@ -1245,7 +1245,344 @@
 		},
 		{
 			"name": "Admin",
-			"item": []
+			"item": [
+				{
+					"name": "List Pending Accounts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/accounts/pending?type=craftsman",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "accounts", "pending"],
+							"query": [
+								{ "key": "type", "value": "craftsman", "description": "Optional: craftsman, institution, or contractor. Omit to list all pending types." }
+							]
+						},
+						"description": "Admin only. Lists all professional accounts (craftsman/institution/contractor) with status=pending, optionally filtered by type."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/accounts/pending?type=craftsman",
+									"host": ["{{base_url}}"],
+									"path": ["admin", "accounts", "pending"],
+									"query": [{ "key": "type", "value": "craftsman" }]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{ "key": "Content-Type", "value": "application/json" }],
+							"body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"account_type\": \"craftsman\",\n      \"account_id\": 2,\n      \"status\": \"pending\",\n      \"rejection_reason\": null,\n      \"verified_at\": null,\n      \"verified_by\": null,\n      \"user\": {\n        \"id\": 13,\n        \"full_name\": \"محمد الحرفي\",\n        \"email\": \"m***@example.com\",\n        \"phone\": \"+970591118800\",\n        \"status\": \"active\",\n        \"governorate_id\": 1,\n        \"area_id\": 1,\n        \"national_id\": null\n      },\n      \"craft_id\": 1,\n      \"bio\": null,\n      \"personal_photo_path\": \"uploads/photo.jpg\",\n      \"id_selfie_path\": \"uploads/selfie.jpg\",\n      \"avg_rating\": \"0.00\"\n    }\n  ],\n  \"message\": \"\"\n}"
+						},
+						{
+							"name": "403 Forbidden (not an admin)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/accounts/pending",
+									"host": ["{{base_url}}"],
+									"path": ["admin", "accounts", "pending"]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [{ "key": "Content-Type", "value": "application/json" }],
+							"body": "{\n  \"success\": false,\n  \"message\": \"ليس لديك صلاحية للوصول إلى هذا المورد.\",\n  \"errors\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "Show Account",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/accounts/craftsman/2",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "accounts", "craftsman", "2"]
+						},
+						"description": "Admin only. Full detail of a single account, including admin-only files (id_selfie_path / license_file_path)."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/accounts/craftsman/2",
+									"host": ["{{base_url}}"],
+									"path": ["admin", "accounts", "craftsman", "2"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{ "key": "Content-Type", "value": "application/json" }],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"pending\",\n    \"rejection_reason\": null,\n    \"verified_at\": null,\n    \"verified_by\": null,\n    \"user\": {\n      \"id\": 13,\n      \"full_name\": \"محمد الحرفي\",\n      \"email\": \"m***@example.com\",\n      \"phone\": \"+970591118800\",\n      \"status\": \"active\",\n      \"governorate_id\": 1,\n      \"area_id\": 1,\n      \"national_id\": null\n    },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"\"\n}"
+						},
+						{
+							"name": "404 Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/accounts/craftsman/999",
+									"host": ["{{base_url}}"],
+									"path": ["admin", "accounts", "craftsman", "999"]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [{ "key": "Content-Type", "value": "application/json" }],
+							"body": "{\n  \"success\": false,\n  \"message\": \"نوع الحساب غير صحيح، أو الحساب غير موجود.\",\n  \"errors\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "Approve Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/accounts/craftsman/2/approve",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "accounts", "craftsman", "2", "approve"]
+						},
+						"description": "Admin only. Sets the role table's status to approved, stamps verified_at/verified_by, and logs the decision in account_reviews. This grants the trust badge — it does not itself change login access."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/accounts/craftsman/2/approve",
+									"host": ["{{base_url}}"],
+									"path": ["admin", "accounts", "craftsman", "2", "approve"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{ "key": "Content-Type", "value": "application/json" }],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"approved\",\n    \"rejection_reason\": null,\n    \"verified_at\": \"2026-09-20T08:36:29.000000Z\",\n    \"verified_by\": 12,\n    \"user\": { \"id\": 13, \"full_name\": \"محمد الحرفي\", \"email\": \"m***@example.com\", \"phone\": \"+970591118800\", \"status\": \"active\", \"governorate_id\": 1, \"area_id\": 1, \"national_id\": null },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"تم اعتماد الحساب بنجاح.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Reject Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reason\": \"الوثائق غير واضحة، الرجاء رفع صورة أوضح لبطاقة الهوية\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/accounts/craftsman/2/reject",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "accounts", "craftsman", "2", "reject"]
+						},
+						"description": "Admin only. reason is mandatory. Sets the role table's status to rejected and stores rejection_reason; logs the decision in account_reviews. Does not affect login access."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"reason\": \"الوثائق غير واضحة، الرجاء رفع صورة أوضح لبطاقة الهوية\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/accounts/craftsman/2/reject",
+									"host": ["{{base_url}}"],
+									"path": ["admin", "accounts", "craftsman", "2", "reject"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{ "key": "Content-Type", "value": "application/json" }],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"rejected\",\n    \"rejection_reason\": \"الوثائق غير واضحة، الرجاء رفع صورة أوضح لبطاقة الهوية\",\n    \"verified_at\": null,\n    \"verified_by\": null,\n    \"user\": { \"id\": 13, \"full_name\": \"محمد الحرفي\", \"email\": \"m***@example.com\", \"phone\": \"+970591118800\", \"status\": \"active\", \"governorate_id\": 1, \"area_id\": 1, \"national_id\": null },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"تم رفض الحساب.\"\n}"
+						},
+						{
+							"name": "422 Validation error (missing reason)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": { "mode": "raw", "raw": "{}" },
+								"url": {
+									"raw": "{{base_url}}/admin/accounts/craftsman/2/reject",
+									"host": ["{{base_url}}"],
+									"path": ["admin", "accounts", "craftsman", "2", "reject"]
+								}
+							},
+							"status": "Unprocessable Content",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [{ "key": "Content-Type", "value": "application/json" }],
+							"body": "{\n  \"success\": false,\n  \"message\": \"سبب الرفض مطلوب.\",\n  \"errors\": {\n    \"reason\": [\"سبب الرفض مطلوب.\"]\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Suspend Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reason\": \"بلاغات متكررة من عملاء بخصوص عدم الالتزام\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/accounts/craftsman/2/suspend",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "accounts", "craftsman", "2", "suspend"]
+						},
+						"description": "Admin only. reason is mandatory. Unlike approve/reject, this sets users.status = suspended (blocks login for the whole account, not just the trust badge) and immediately revokes all of the user's active tokens. Logged in account_reviews."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"reason\": \"بلاغات متكررة من عملاء بخصوص عدم الالتزام\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/admin/accounts/craftsman/2/suspend",
+									"host": ["{{base_url}}"],
+									"path": ["admin", "accounts", "craftsman", "2", "suspend"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{ "key": "Content-Type", "value": "application/json" }],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"approved\",\n    \"rejection_reason\": null,\n    \"verified_at\": \"2026-09-20T08:36:29.000000Z\",\n    \"verified_by\": 12,\n    \"user\": { \"id\": 13, \"full_name\": \"محمد الحرفي\", \"email\": \"m***@example.com\", \"phone\": \"+970591118800\", \"status\": \"suspended\", \"governorate_id\": 1, \"area_id\": 1, \"national_id\": null },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"تم إيقاف الحساب.\"\n}"
+						},
+						{
+							"name": "422 Validation error (missing reason)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": { "mode": "raw", "raw": "{}" },
+								"url": {
+									"raw": "{{base_url}}/admin/accounts/craftsman/2/suspend",
+									"host": ["{{base_url}}"],
+									"path": ["admin", "accounts", "craftsman", "2", "suspend"]
+								}
+							},
+							"status": "Unprocessable Content",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [{ "key": "Content-Type", "value": "application/json" }],
+							"body": "{\n  \"success\": false,\n  \"message\": \"سبب الإيقاف مطلوب.\",\n  \"errors\": {\n    \"reason\": [\"سبب الإيقاف مطلوب.\"]\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Activate Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}" },
+							{ "key": "Accept", "value": "application/json" }
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/accounts/craftsman/2/activate",
+							"host": ["{{base_url}}"],
+							"path": ["admin", "accounts", "craftsman", "2", "activate"]
+						},
+						"description": "Admin only. Reverses suspend: sets users.status = active and clears suspension_reason. Logged in account_reviews."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Authorization", "value": "Bearer {{token}}" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"url": {
+									"raw": "{{base_url}}/admin/accounts/craftsman/2/activate",
+									"host": ["{{base_url}}"],
+									"path": ["admin", "accounts", "craftsman", "2", "activate"]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [{ "key": "Content-Type", "value": "application/json" }],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"approved\",\n    \"rejection_reason\": null,\n    \"verified_at\": \"2026-09-20T08:36:29.000000Z\",\n    \"verified_by\": 12,\n    \"user\": { \"id\": 13, \"full_name\": \"محمد الحرفي\", \"email\": \"m***@example.com\", \"phone\": \"+970591118800\", \"status\": \"active\", \"governorate_id\": 1, \"area_id\": 1, \"national_id\": null },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"تم تفعيل الحساب من جديد.\"\n}"
+						}
+					]
+				}
+			]
 		}
 	]
 }
