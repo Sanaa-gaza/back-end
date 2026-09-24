@@ -10,7 +10,7 @@ class GovernorateSeeder extends Seeder
     public function run(): void
     {
         foreach (['شمال غزة', 'غزة', 'دير البلح', 'خان يونس', 'رفح'] as $name) {
-            Governorate::create(['name' => $name]);
+            Governorate::firstOrCreate(['name' => $name]);
         }
     }
 }

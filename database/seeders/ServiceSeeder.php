@@ -10,7 +10,7 @@ class ServiceSeeder extends Seeder
     public function run(): void
     {
         foreach (['سباك', 'كهربائي', 'فني تكييف'] as $name) {
-            Service::create(['name' => $name, 'is_active' => true]);
+            Service::firstOrCreate(['name' => $name], ['is_active' => true]);
         }
     }
 }
