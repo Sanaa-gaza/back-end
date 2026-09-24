@@ -23,13 +23,15 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
         ]);
 
-        $area = Area::first();
+        if (app()->environment('local')) {
+            $area = Area::first();
 
-        User::factory()->create([
-            'full_name' => 'Test User',
-            'email' => 'test@example.com',
-            'governorate_id' => $area->governorate_id,
-            'area_id' => $area->id,
-        ]);
+            User::factory()->create([
+                'full_name' => 'Test User',
+                'email' => 'test@example.com',
+                'governorate_id' => $area->governorate_id,
+                'area_id' => $area->id,
+            ]);
+        }
     }
 }
