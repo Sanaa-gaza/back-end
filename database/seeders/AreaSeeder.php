@@ -21,7 +21,7 @@ class AreaSeeder extends Seeder
             $governorate = Governorate::where('name', $governorateName)->firstOrFail();
 
             foreach ($areaNames as $areaName) {
-                $governorate->areas()->create(['name' => $areaName]);
+                $governorate->areas()->firstOrCreate(['name' => $areaName]);
             }
         }
     }

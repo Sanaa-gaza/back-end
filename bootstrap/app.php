@@ -18,6 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Render (and most PaaS hosts) sit behind a reverse proxy that terminates
+        // TLS, so trust its forwarded headers to detect HTTPS/host correctly.
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'verified.email' => \App\Http\Middleware\EnsureEmailIsVerified::class,
             'active.account' => \App\Http\Middleware\EnsureAccountIsActive::class,
