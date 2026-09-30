@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Mail\OtpCodeMail;
-use App\Models\ActivityType;
 use App\Models\Area;
 use App\Models\Governorate;
 use App\Models\Institution;
@@ -23,7 +22,6 @@ class RegisterInstitutionTest extends TestCase
         Storage::fake('public');
 
         $area = Area::factory()->for($governorate = Governorate::factory()->create())->create();
-        $activityType = ActivityType::factory()->create();
         $licensePath = UploadedFile::fake()->create('license.pdf', 100, 'application/pdf')->store('uploads', 'public');
 
         return array_merge([
@@ -35,7 +33,7 @@ class RegisterInstitutionTest extends TestCase
             'password_confirmation' => 'Str0ng!Pass',
             'governorate_id' => $governorate->id,
             'area_id' => $area->id,
-            'activity_type_id' => $activityType->id,
+            'activity_type' => 'إغاثة إنسانية',
             'license_file_path' => $licensePath,
             'description' => 'مؤسسة خيرية تعمل في قطاع غزة.',
             'terms_accepted' => true,
@@ -123,15 +121,26 @@ class RegisterInstitutionTest extends TestCase
             ->assertJsonValidationErrors('password');
     }
 
-    public function test_registration_fails_with_a_nonexistent_activity_type(): void
+    public function test_registration_fails_without_activity_type(): void
     {
         $response = $this->postJson('/api/auth/register/institution', $this->validPayload([
-            'activity_type_id' => 999,
+            'activity_type' => '',
         ]));
 
         $response->assertStatus(422)
             ->assertJson(['success' => false])
-            ->assertJsonValidationErrors('activity_type_id');
+            ->assertJsonValidationErrors('activity_type');
+    }
+
+    public function test_registration_fails_without_description(): void
+    {
+        $response = $this->postJson('/api/auth/register/institution', $this->validPayload([
+            'description' => '',
+        ]));
+
+        $response->assertStatus(422)
+            ->assertJson(['success' => false])
+            ->assertJsonValidationErrors('description');
     }
 
     public function test_registration_fails_when_license_was_not_uploaded_first(): void

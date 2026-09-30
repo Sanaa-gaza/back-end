@@ -14,7 +14,7 @@ class Institution extends Model
         'user_id',
         'institution_name',
         'commercial_registration_number',
-        'activity_type_id',
+        'activity_type',
         'license_file_path',
         'description',
         'status',
@@ -33,11 +33,6 @@ class Institution extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function activityType(): BelongsTo
-    {
-        return $this->belongsTo(ActivityType::class);
     }
 
     public function verifiedBy(): BelongsTo

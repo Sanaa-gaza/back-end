@@ -32,7 +32,7 @@ class ProfileResource extends JsonResource
             'institution' => $this->when($this->role === 'institution' && $this->institution, fn () => [
                 'institution_name' => $this->institution->institution_name,
                 'commercial_registration_number' => $this->institution->commercial_registration_number,
-                'activity_type_id' => $this->institution->activity_type_id,
+                'activity_type' => $this->institution->activity_type,
                 'description' => $this->institution->description,
                 'status' => $this->institution->status,
             ]),

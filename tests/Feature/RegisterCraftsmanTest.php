@@ -166,6 +166,63 @@ class RegisterCraftsmanTest extends TestCase
             ->assertJsonValidationErrors('bio');
     }
 
+    public function test_registration_fails_without_bio(): void
+    {
+        $response = $this->postJson('/api/auth/register/craftsman', $this->validPayload([
+            'bio' => '',
+        ]));
+
+        $response->assertStatus(422)
+            ->assertJson(['success' => false])
+            ->assertJsonValidationErrors('bio');
+    }
+
+    public function test_registration_fails_with_a_too_short_bio(): void
+    {
+        $response = $this->postJson('/api/auth/register/craftsman', $this->validPayload([
+            'bio' => 'قصير',
+        ]));
+
+        $response->assertStatus(422)
+            ->assertJson(['success' => false])
+            ->assertJsonValidationErrors('bio');
+    }
+
+    public function test_craftsman_can_register_with_a_custom_craft_name(): void
+    {
+        Mail::fake();
+
+        $payload = $this->validPayload(['email' => 'custom.craft@example.com']);
+        unset($payload['craft_id']);
+        $payload['custom_craft_name'] = 'نجار موبيليا';
+
+        $response = $this->postJson('/api/auth/register/craftsman', $payload);
+
+        $response->assertCreated();
+
+        $this->assertDatabaseHas('services', ['name' => 'نجار موبيليا']);
+
+        $craftId = Service::where('name', 'نجار موبيليا')->value('id');
+        $this->assertDatabaseHas('craftsmen', ['craft_id' => $craftId]);
+    }
+
+    public function test_custom_craft_name_reuses_an_existing_normalized_match(): void
+    {
+        Mail::fake();
+
+        $existing = Service::factory()->create(['name' => 'نجار']);
+
+        $payload = $this->validPayload(['email' => 'reuse.craft@example.com']);
+        unset($payload['craft_id']);
+        $payload['custom_craft_name'] = '  نجّار  ';
+
+        $response = $this->postJson('/api/auth/register/craftsman', $payload);
+
+        $response->assertCreated();
+        $this->assertDatabaseHas('craftsmen', ['craft_id' => $existing->id]);
+        $this->assertEquals(1, Service::where('name', 'نجار')->count());
+    }
+
     public function test_registration_fails_without_accepting_terms(): void
     {
         $response = $this->postJson('/api/auth/register/craftsman', $this->validPayload([

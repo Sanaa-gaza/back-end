@@ -39,9 +39,9 @@ class RegisterInstitutionRequest extends FormRequest
             'password' => ['required', 'confirmed', new PasswordRule],
             'governorate_id' => ['required', 'exists:governorates,id'],
             'area_id' => ['required', 'exists:areas,id'],
-            'activity_type_id' => ['required', 'exists:activity_types,id'],
+            'activity_type' => ['required', 'string', 'max:200'],
             'license_file_path' => ['required', 'string'],
-            'description' => ['nullable', 'string', 'max:500'],
+            'description' => ['required', 'string', 'max:500'],
             'terms_accepted' => ['accepted'],
         ];
     }
@@ -80,9 +80,10 @@ class RegisterInstitutionRequest extends FormRequest
             'governorate_id.exists' => 'المحافظة المختارة غير صحيحة.',
             'area_id.required' => 'عنوان السكن مطلوب.',
             'area_id.exists' => 'عنوان السكن المختار غير صحيح.',
-            'activity_type_id.required' => 'طبيعة النشاط مطلوبة.',
-            'activity_type_id.exists' => 'طبيعة النشاط المختارة غير صحيحة.',
+            'activity_type.required' => 'طبيعة النشاط مطلوبة.',
+            'activity_type.max' => 'طبيعة النشاط يجب ألا تتجاوز 200 حرف.',
             'license_file_path.required' => 'الرخصة التجارية مطلوبة.',
+            'description.required' => 'النبذة التعريفية مطلوبة.',
             'description.max' => 'النبذة التعريفية يجب ألا تتجاوز 500 حرف.',
             'terms_accepted.accepted' => 'يجب الموافقة على الشروط والأحكام.',
         ];

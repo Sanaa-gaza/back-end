@@ -105,14 +105,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"full_name\": \"خالد يوسف\",\n  \"email\": \"khaled@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/photo.jpg\",\n  \"id_selfie_path\": \"uploads/selfie.jpg\",\n  \"craft_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات.\",\n  \"terms_accepted\": true\n}"
+							"raw": "{\n  \"full_name\": \"خالد يوسف\",\n  \"email\": \"khaled@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/photo.jpg\",\n  \"id_selfie_path\": \"uploads/selfie.jpg\",\n  \"craft_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات في تركيب وصيانة الأنابيب.\",\n  \"terms_accepted\": true\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/auth/register/craftsman",
 							"host": ["{{base_url}}"],
 							"path": ["auth", "register", "craftsman"]
 						},
-						"description": "One request for both wizard steps (screens 4+5). personal_photo_path and id_selfie_path must be real paths already returned by POST /api/uploads — call that first for each file. id_selfie_path is admin-only and is never returned in any response."
+						"description": "One request for both wizard steps (screens 4+5). personal_photo_path and id_selfie_path must be real paths already returned by POST /api/uploads — call that first for each file. id_selfie_path is admin-only and is never returned in any response.\n\ncraft_id: pick from GET /api/services. For the \"other\" option in the craft picker, omit craft_id and send custom_craft_name instead (free text) — the backend normalizes it (strips diacritics, unifies alef/hamza forms) and either reuses a matching existing craft or creates a new one automatically, then stores its id as craft_id. Exactly one of craft_id / custom_craft_name is required.\n\nbio is required, minimum 10 characters."
 					},
 					"response": [
 						{
@@ -125,7 +125,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"full_name\": \"خالد يوسف\",\n  \"email\": \"khaled@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/photo.jpg\",\n  \"id_selfie_path\": \"uploads/selfie.jpg\",\n  \"craft_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات.\",\n  \"terms_accepted\": true\n}"
+									"raw": "{\n  \"full_name\": \"خالد يوسف\",\n  \"email\": \"khaled@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/photo.jpg\",\n  \"id_selfie_path\": \"uploads/selfie.jpg\",\n  \"craft_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات في تركيب وصيانة الأنابيب.\",\n  \"terms_accepted\": true\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/auth/register/craftsman",
@@ -142,6 +142,32 @@
 							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"k***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
 						},
 						{
+							"name": "201 Success (custom craft via \"other\")",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{ "key": "Content-Type", "value": "application/json" },
+									{ "key": "Accept", "value": "application/json" }
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"full_name\": \"سامي عودة\",\n  \"email\": \"sami@example.com\",\n  \"phone\": \"+970591234569\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/photo.jpg\",\n  \"id_selfie_path\": \"uploads/selfie.jpg\",\n  \"custom_craft_name\": \"صانع فخار\",\n  \"bio\": \"حرفي متمرس بصناعة الفخار التقليدي منذ 8 سنوات.\",\n  \"terms_accepted\": true\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/register/craftsman",
+									"host": ["{{base_url}}"],
+									"path": ["auth", "register", "craftsman"]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{ "key": "Content-Type", "value": "application/json" }
+							],
+							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"s***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
+						},
+						{
 							"name": "422 Validation error (photo not uploaded first)",
 							"originalRequest": {
 								"method": "POST",
@@ -151,7 +177,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"full_name\": \"خالد يوسف\",\n  \"email\": \"khaled2@example.com\",\n  \"phone\": \"+970591234568\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/does-not-exist.jpg\",\n  \"id_selfie_path\": \"uploads/does-not-exist.jpg\",\n  \"craft_id\": 1,\n  \"terms_accepted\": true\n}"
+									"raw": "{\n  \"full_name\": \"خالد يوسف\",\n  \"email\": \"khaled2@example.com\",\n  \"phone\": \"+970591234568\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/does-not-exist.jpg\",\n  \"id_selfie_path\": \"uploads/does-not-exist.jpg\",\n  \"craft_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات في تركيب وصيانة الأنابيب.\",\n  \"terms_accepted\": true\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/auth/register/craftsman",
@@ -179,14 +205,14 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type_id\": 1,\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"description\": \"مؤسسة خيرية تعمل في قطاع غزة.\",\n  \"terms_accepted\": true\n}"
+							"raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type\": \"إغاثة إنسانية\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"description\": \"مؤسسة خيرية تعمل في قطاع غزة.\",\n  \"terms_accepted\": true\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/auth/register/institution",
 							"host": ["{{base_url}}"],
 							"path": ["auth", "register", "institution"]
 						},
-						"description": "One request for both wizard steps (screens 6+7). license_file_path must be a real path already returned by POST /api/uploads. activity_type_id currently has no seeded data (content will be managed later via an admin dashboard) — ask a backend dev for a valid id to test against, or create one via tinker locally."
+						"description": "One request for both wizard steps (screens 6+7). license_file_path must be a real path already returned by POST /api/uploads. activity_type is free text (no fixed list). description is required."
 					},
 					"response": [
 						{
@@ -199,7 +225,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type_id\": 1,\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"description\": \"مؤسسة خيرية تعمل في قطاع غزة.\",\n  \"terms_accepted\": true\n}"
+									"raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type\": \"إغاثة إنسانية\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"description\": \"مؤسسة خيرية تعمل في قطاع غزة.\",\n  \"terms_accepted\": true\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/auth/register/institution",
@@ -225,7 +251,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution2@example.com\",\n  \"phone\": \"+970591234568\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type_id\": 1,\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"terms_accepted\": true\n}"
+									"raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution2@example.com\",\n  \"phone\": \"+970591234568\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type\": \"إغاثة إنسانية\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"description\": \"مؤسسة خيرية تعمل في قطاع غزة.\",\n  \"terms_accepted\": true\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/auth/register/institution",
