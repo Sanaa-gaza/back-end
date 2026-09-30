@@ -47,7 +47,7 @@ class AdminAccountResource extends JsonResource
             $this->resource instanceof Institution => array_merge($base, [
                 'institution_name' => $this->institution_name,
                 'commercial_registration_number' => $this->commercial_registration_number,
-                'activity_type_id' => $this->activity_type_id,
+                'activity_type' => $this->activity_type,
                 'license_file_path' => $this->license_file_path,
                 'description' => $this->description,
             ]),

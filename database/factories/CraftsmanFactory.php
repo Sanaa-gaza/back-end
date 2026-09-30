@@ -24,7 +24,7 @@ class CraftsmanFactory extends Factory
             'craft_id' => Service::factory(),
             'personal_photo_path' => 'craftsmen/photos/'.fake()->uuid().'.jpg',
             'id_selfie_path' => 'craftsmen/id-selfies/'.fake()->uuid().'.jpg',
-            'bio' => fake()->optional()->text(200),
+            'bio' => fake()->text(200),
             'status' => 'pending',
         ];
     }

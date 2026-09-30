@@ -100,7 +100,7 @@ class RegisterController extends Controller
                 'user_id' => $user->id,
                 'institution_name' => $request->institution_name,
                 'commercial_registration_number' => $request->commercial_registration_number,
-                'activity_type_id' => $request->activity_type_id,
+                'activity_type' => $request->activity_type,
                 'license_file_path' => $request->license_file_path,
                 'description' => $request->description,
                 'status' => 'pending',

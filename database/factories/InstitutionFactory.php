@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\ActivityType;
 use App\Models\Institution;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,9 +22,9 @@ class InstitutionFactory extends Factory
             'user_id' => User::factory()->state(['role' => 'institution']),
             'institution_name' => fake()->company(),
             'commercial_registration_number' => fake()->unique()->numerify('CR-#######'),
-            'activity_type_id' => ActivityType::factory(),
+            'activity_type' => fake()->randomElement(['إغاثة إنسانية', 'تعليم', 'صحة', 'تنمية مجتمعية']),
             'license_file_path' => 'institutions/licenses/'.fake()->uuid().'.pdf',
-            'description' => fake()->optional()->text(200),
+            'description' => fake()->text(200),
             'status' => 'pending',
         ];
     }
