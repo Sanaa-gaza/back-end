@@ -68,7 +68,7 @@ class VerificationController extends Controller
                     [],
                     429
                 )
-                : $this->error('تم تجاوز الحد الأقصى لإعادة الإرسال. الرجاء المحاولة بعد ساعة.', [], 429);
+                : $this->error('تم تجاوز الحد الأقصى لإعادة الإرسال. الرجاء المحاولة بعد 10 دقائق.', [], 429);
         }
 
         $this->otpService->generateAndSend($request->email, $request->purpose);
