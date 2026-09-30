@@ -42,21 +42,21 @@ class ResendCodeTest extends TestCase
         $this->assertEquals(1, OtpCode::where('email', 'resend2@example.com')->count());
     }
 
-    public function test_resend_code_is_rejected_after_hourly_limit(): void
+    public function test_resend_code_is_rejected_after_three_sends_within_ten_minutes(): void
     {
         Mail::fake();
         User::factory()->unverified()->create(['email' => 'resend3@example.com']);
 
-        // 3 prior sends within the last hour, each older than the 45s cooldown.
-        foreach (range(1, 3) as $i) {
-            OtpCode::create([
+        // 3 prior sends within the last 10 minutes, each older than the 45s cooldown.
+        foreach ([2, 4, 6] as $minutesAgo) {
+            OtpCode::forceCreate([
                 'email' => 'resend3@example.com',
                 'purpose' => 'register',
                 'code_hash' => hash('sha256', '111111'),
                 'expires_at' => now()->addMinutes(3),
                 'attempts' => 0,
                 'consumed_at' => now(),
-                'created_at' => now()->subMinutes(10 * $i),
+                'created_at' => now()->subMinutes($minutesAgo),
             ]);
         }
 
@@ -67,6 +67,33 @@ class ResendCodeTest extends TestCase
 
         $response->assertStatus(429)->assertJson(['success' => false]);
         Mail::assertNotSent(OtpCodeMail::class);
+    }
+
+    public function test_resend_code_is_allowed_again_after_the_ten_minute_window_passes(): void
+    {
+        Mail::fake();
+        User::factory()->unverified()->create(['email' => 'resend4@example.com']);
+
+        // 3 prior sends, but all outside the 10-minute window.
+        foreach ([11, 13, 15] as $minutesAgo) {
+            OtpCode::forceCreate([
+                'email' => 'resend4@example.com',
+                'purpose' => 'register',
+                'code_hash' => hash('sha256', '111111'),
+                'expires_at' => now()->addMinutes(3),
+                'attempts' => 0,
+                'consumed_at' => now(),
+                'created_at' => now()->subMinutes($minutesAgo),
+            ]);
+        }
+
+        $response = $this->postJson('/api/auth/resend-code', [
+            'email' => 'resend4@example.com',
+            'purpose' => 'register',
+        ]);
+
+        $response->assertOk()->assertJson(['success' => true]);
+        Mail::assertSent(OtpCodeMail::class);
     }
 
     public function test_resend_code_fails_validation_without_purpose(): void

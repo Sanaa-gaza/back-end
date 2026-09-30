@@ -12,7 +12,9 @@ class OtpService
 
     private const RESEND_COOLDOWN_SECONDS = 45;
 
-    private const RESEND_LIMIT_PER_HOUR = 3;
+    private const RESEND_LIMIT = 3;
+
+    private const RESEND_LIMIT_WINDOW_MINUTES = 10;
 
     /**
      * Generate a fresh 6-digit code for the given email/purpose, invalidating
@@ -40,9 +42,10 @@ class OtpService
     }
 
     /**
-     * Check the §6.3 resend rules (45s cooldown, 3/hour), based on how many
-     * codes have actually been sent for this email/purpose — wrong-code
-     * verify attempts never count here, only sends do.
+     * Check the §6.3 resend rules (45s cooldown, 3 sends per rolling 10-minute
+     * window), based on how many codes have actually been sent for this
+     * email/purpose — wrong-code verify attempts never count here, only
+     * sends do.
      *
      * @return true|array{reason: string, retry_after_seconds?: int}
      */
@@ -60,12 +63,12 @@ class OtpService
             ];
         }
 
-        $sentLastHour = OtpCode::where('email', $email)
+        $sentInWindow = OtpCode::where('email', $email)
             ->where('purpose', $purpose)
-            ->where('created_at', '>=', now()->subHour())
+            ->where('created_at', '>=', now()->subMinutes(self::RESEND_LIMIT_WINDOW_MINUTES))
             ->count();
 
-        if ($sentLastHour >= self::RESEND_LIMIT_PER_HOUR) {
+        if ($sentInWindow >= self::RESEND_LIMIT) {
             return ['reason' => 'limit'];
         }
 
