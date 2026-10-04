@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             GovernorateSeeder::class,
             AreaSeeder::class,
             ServiceSeeder::class,
+            ServiceContentSeeder::class,
             AdminSeeder::class,
         ]);
 
