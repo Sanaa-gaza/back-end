@@ -18,7 +18,6 @@ class Craftsman extends Model
         'personal_photo_path',
         'id_selfie_path',
         'bio',
-        'years_experience',
         'status',
         'is_available',
         'rejection_reason',

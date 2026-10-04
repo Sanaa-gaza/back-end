@@ -30,7 +30,6 @@ class UpdateProfileRequest extends FormRequest
             'governorate_id' => ['sometimes', 'exists:governorates,id'],
             'area_id' => ['sometimes', 'exists:areas,id'],
             'bio' => ['sometimes', 'nullable', 'string', 'max:500'],
-            'years_experience' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:80'],
             'is_available' => ['sometimes', 'boolean'],
             'personal_photo_path' => ['sometimes', 'string'],
             'description' => ['sometimes', 'nullable', 'string', 'max:500'],
@@ -77,9 +76,6 @@ class UpdateProfileRequest extends FormRequest
             'description.max' => 'النبذة التعريفية يجب ألا تتجاوز 500 حرف.',
             'workers_count.integer' => 'عدد العمال يجب أن يكون رقماً صحيحاً.',
             'workers_count.min' => 'عدد العمال يجب أن يكون 1 على الأقل.',
-            'years_experience.integer' => 'سنوات الخبرة يجب أن تكون رقماً صحيحاً.',
-            'years_experience.min' => 'سنوات الخبرة لا يمكن أن تكون سالبة.',
-            'years_experience.max' => 'سنوات الخبرة غير صحيحة.',
         ];
     }
 }

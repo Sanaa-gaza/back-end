@@ -24,7 +24,6 @@ class ProfileResource extends JsonResource
             'craftsman' => $this->when($this->role === 'craftsman' && $this->craftsman, fn () => [
                 'craft_id' => $this->craftsman->craft_id,
                 'bio' => $this->craftsman->bio,
-                'years_experience' => $this->craftsman->years_experience,
                 'personal_photo_path' => $this->craftsman->personal_photo_path,
                 'status' => $this->craftsman->status,
                 'is_available' => $this->craftsman->is_available,
