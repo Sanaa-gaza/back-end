@@ -1,1614 +1,3316 @@
 {
-	"info": {
-		"_postman_id": "5f5a1e3a-9c1f-4b7a-9d5a-senaa-api-0001",
-		"name": "Senaa API",
-		"description": "Senaa marketplace API — Sprint 1 (authentication and registration). See docs/sprint-1-backend.md for the full backend specification.",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "https://back-end-production-9aa3.up.railway.app/api",
-			"type": "string"
-		},
-		{
-			"key": "token",
-			"value": "",
-			"type": "string"
-		}
-	],
-	"item": [
-		{
-			"name": "Auth",
-			"item": [
-				{
-					"name": "Register Customer",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"full_name\": \"محمد أحمد\",\n  \"email\": \"mohammed@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"terms_accepted\": true\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/auth/register/customer",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "register", "customer"]
-						},
-						"description": "Creates the account with email_verified_at = NULL and sends a 6-digit code (purpose=register) to the email. No token is returned here — call Verify Email next with the code (check storage/logs/laravel.log locally, since MAIL_MAILER=log) to receive the login token. phone accepts +970 or +972; it is normalized to +970XXXXXXXXX before storage."
-					},
-					"response": [
-						{
-							"name": "201 Success",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"full_name\": \"محمد أحمد\",\n  \"email\": \"mohammed@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"terms_accepted\": true\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/register/customer",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "register", "customer"]
-								}
-							},
-							"status": "Created",
-							"code": 201,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"m***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
-						},
-						{
-							"name": "422 Validation error (duplicate email)",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"full_name\": \"محمد أحمد\",\n  \"email\": \"mohammed@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"terms_accepted\": true\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/register/customer",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "register", "customer"]
-								}
-							},
-							"status": "Unprocessable Content",
-							"code": 422,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"هذا البريد الإلكتروني مستخدم بالفعل.\",\n  \"errors\": {\n    \"email\": [\"هذا البريد الإلكتروني مستخدم بالفعل.\"]\n  }\n}"
-						}
-					]
-				},
-				{
-					"name": "Register Craftsman",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"full_name\": \"خالد يوسف\",\n  \"email\": \"khaled@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/photo.jpg\",\n  \"id_selfie_path\": \"uploads/selfie.jpg\",\n  \"craft_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات في تركيب وصيانة الأنابيب.\",\n  \"terms_accepted\": true\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/auth/register/craftsman",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "register", "craftsman"]
-						},
-						"description": "One request for both wizard steps (screens 4+5). personal_photo_path and id_selfie_path must be real paths already returned by POST /api/uploads — call that first for each file. id_selfie_path is admin-only and is never returned in any response.\n\ncraft_id: pick from GET /api/services. For the \"other\" option in the craft picker, omit craft_id and send custom_craft_name instead (free text) — the backend normalizes it (strips diacritics, unifies alef/hamza forms) and either reuses a matching existing craft or creates a new one automatically, then stores its id as craft_id. Exactly one of craft_id / custom_craft_name is required.\n\nbio is required, minimum 10 characters."
-					},
-					"response": [
-						{
-							"name": "201 Success",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"full_name\": \"خالد يوسف\",\n  \"email\": \"khaled@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/photo.jpg\",\n  \"id_selfie_path\": \"uploads/selfie.jpg\",\n  \"craft_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات في تركيب وصيانة الأنابيب.\",\n  \"terms_accepted\": true\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/register/craftsman",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "register", "craftsman"]
-								}
-							},
-							"status": "Created",
-							"code": 201,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"k***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
-						},
-						{
-							"name": "201 Success (custom craft via \"other\")",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"full_name\": \"سامي عودة\",\n  \"email\": \"sami@example.com\",\n  \"phone\": \"+970591234569\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/photo.jpg\",\n  \"id_selfie_path\": \"uploads/selfie.jpg\",\n  \"custom_craft_name\": \"صانع فخار\",\n  \"bio\": \"حرفي متمرس بصناعة الفخار التقليدي منذ 8 سنوات.\",\n  \"terms_accepted\": true\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/register/craftsman",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "register", "craftsman"]
-								}
-							},
-							"status": "Created",
-							"code": 201,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"s***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
-						},
-						{
-							"name": "422 Validation error (photo not uploaded first)",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"full_name\": \"خالد يوسف\",\n  \"email\": \"khaled2@example.com\",\n  \"phone\": \"+970591234568\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/does-not-exist.jpg\",\n  \"id_selfie_path\": \"uploads/does-not-exist.jpg\",\n  \"craft_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات في تركيب وصيانة الأنابيب.\",\n  \"terms_accepted\": true\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/register/craftsman",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "register", "craftsman"]
-								}
-							},
-							"status": "Unprocessable Content",
-							"code": 422,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"الصورة الشخصية غير موجودة. الرجاء رفعها أولاً عبر /api/uploads.\",\n  \"errors\": {\n    \"personal_photo_path\": [\"الصورة الشخصية غير موجودة. الرجاء رفعها أولاً عبر /api/uploads.\"],\n    \"id_selfie_path\": [\"صورة الهوية غير موجودة. الرجاء رفعها أولاً عبر /api/uploads.\"]\n  }\n}"
-						}
-					]
-				},
-				{
-					"name": "Register Institution",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type\": \"إغاثة إنسانية\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"description\": \"مؤسسة خيرية تعمل في قطاع غزة.\",\n  \"terms_accepted\": true\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/auth/register/institution",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "register", "institution"]
-						},
-						"description": "One request for both wizard steps (screens 6+7). license_file_path must be a real path already returned by POST /api/uploads. activity_type is free text (no fixed list). description is required."
-					},
-					"response": [
-						{
-							"name": "201 Success",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type\": \"إغاثة إنسانية\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"description\": \"مؤسسة خيرية تعمل في قطاع غزة.\",\n  \"terms_accepted\": true\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/register/institution",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "register", "institution"]
-								}
-							},
-							"status": "Created",
-							"code": 201,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"i***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
-						},
-						{
-							"name": "422 Validation error (duplicate commercial registration number)",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution2@example.com\",\n  \"phone\": \"+970591234568\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type\": \"إغاثة إنسانية\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"description\": \"مؤسسة خيرية تعمل في قطاع غزة.\",\n  \"terms_accepted\": true\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/register/institution",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "register", "institution"]
-								}
-							},
-							"status": "Unprocessable Content",
-							"code": 422,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"رقم التسجيل التجاري مستخدم بالفعل.\",\n  \"errors\": {\n    \"commercial_registration_number\": [\"رقم التسجيل التجاري مستخدم بالفعل.\"]\n  }\n}"
-						}
-					]
-				},
-				{
-					"name": "Register Contractor",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"full_name\": \"أحمد محمود سالم عبدالله\",\n  \"national_id\": \"123456789\",\n  \"email\": \"contractor@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"workers_count\": 15,\n  \"main_specialization\": \"بناء وتشييد\",\n  \"description\": \"مقاول بخبرة واسعة.\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"terms_accepted\": true\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/auth/register/contractor",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "register", "contractor"]
-						},
-						"description": "One request for all three wizard steps (screens 8+9+10). license_file_path must be a real path already returned by POST /api/uploads. national_id is 9 digits and unique — collected only for contractors."
-					},
-					"response": [
-						{
-							"name": "201 Success",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"full_name\": \"أحمد محمود سالم عبدالله\",\n  \"national_id\": \"123456789\",\n  \"email\": \"contractor@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"workers_count\": 15,\n  \"main_specialization\": \"بناء وتشييد\",\n  \"description\": \"مقاول بخبرة واسعة.\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"terms_accepted\": true\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/register/contractor",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "register", "contractor"]
-								}
-							},
-							"status": "Created",
-							"code": 201,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"c***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
-						},
-						{
-							"name": "422 Validation error (invalid national_id length)",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"full_name\": \"أحمد محمود سالم عبدالله\",\n  \"national_id\": \"12345\",\n  \"email\": \"contractor2@example.com\",\n  \"phone\": \"+970591234568\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"workers_count\": 15,\n  \"main_specialization\": \"بناء وتشييد\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"terms_accepted\": true\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/register/contractor",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "register", "contractor"]
-								}
-							},
-							"status": "Unprocessable Content",
-							"code": 422,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"رقم الهوية يجب أن يتكون من 9 أرقام.\",\n  \"errors\": {\n    \"national_id\": [\"رقم الهوية يجب أن يتكون من 9 أرقام.\"]\n  }\n}"
-						}
-					]
-				},
-				{
-					"name": "Verify Email",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"if (pm.response.code === 200) {",
-									"    const body = pm.response.json();",
-									"    if (body.data && body.data.token) {",
-									"        pm.collectionVariables.set('token', body.data.token);",
-									"    }",
-									"}"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"code\": \"123456\",\n  \"purpose\": \"register\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/auth/verify-email",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "verify-email"]
-						},
-						"description": "purpose=register on success sets email_verified_at, issues the Sanctum login token (auto-saved to {{token}} by the Tests script here), and logs the user in. purpose=reset on success returns a short-lived reset_token instead (not a login token) — used by Reset Password. Get the real code from storage/logs/laravel.log locally (MAIL_MAILER=log)."
-					},
-					"response": [
-						{
-							"name": "200 Success (register)",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"code\": \"123456\",\n  \"purpose\": \"register\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/verify-email",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "verify-email"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"token\": \"1|M78XjOcV8vizcekHw8EKC6TrNQ2LCH7WDfBfAD5e26a8f156\",\n    \"user\": {\n      \"id\": 6,\n      \"full_name\": \"محمد أحمد\",\n      \"email\": \"mohammed@example.com\",\n      \"phone\": \"+970591234567\",\n      \"role\": \"customer\",\n      \"status\": \"active\",\n      \"governorate_id\": 1,\n      \"area_id\": 1,\n      \"email_verified_at\": \"2026-09-19T13:44:09.000000Z\"\n    }\n  },\n  \"message\": \"تم تأكيد البريد الإلكتروني بنجاح.\"\n}"
-						},
-						{
-							"name": "422 Wrong or expired code",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"code\": \"000000\",\n  \"purpose\": \"register\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/verify-email",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "verify-email"]
-								}
-							},
-							"status": "Unprocessable Content",
-							"code": 422,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"الكود غير صحيح أو منتهي الصلاحية.\",\n  \"errors\": []\n}"
-						}
-					]
-				},
-				{
-					"name": "Resend Code",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"purpose\": \"register\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/auth/resend-code",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "resend-code"]
-						},
-						"description": "Subject to §6.3: 45-second cooldown and 3 sends/hour per email+purpose. Wrong verify-email attempts never count against this limit — only actual sends do."
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"purpose\": \"register\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/resend-code",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "resend-code"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"تم إرسال كود جديد إلى بريدك الإلكتروني.\"\n}"
-						},
-						{
-							"name": "429 Cooldown / limit reached",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"purpose\": \"register\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/resend-code",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "resend-code"]
-								}
-							},
-							"status": "Too Many Requests",
-							"code": 429,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"الرجاء الانتظار 45 ثانية قبل طلب كود جديد.\",\n  \"errors\": []\n}"
-						}
-					]
-				},
-				{
-					"name": "Login",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"if (pm.response.code === 200) {",
-									"    const body = pm.response.json();",
-									"    if (body.data && body.data.token) {",
-									"        pm.collectionVariables.set('token', body.data.token);",
-									"    }",
-									"}"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"password\": \"Str0ng!Pass\",\n  \"remember\": false\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/auth/login",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "login"]
-						},
-						"description": "email_verified_at is checked before anything else — an unverified account gets a 403 with a fresh code sent, not a credentials error. 5 consecutive wrong passwords lock the account for 15 minutes (423). remember=true issues a 30-day token instead of the default 24-hour one. Auto-saves the token to {{token}} on success."
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"password\": \"Str0ng!Pass\",\n  \"remember\": false\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/login",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "login"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"token\": \"3|bnG3nCMGiU5qO3JPPhNpAfRIVugHgP9DFRX3lh5v88e97203\",\n    \"user\": {\n      \"id\": 7,\n      \"full_name\": \"محمد أحمد\",\n      \"email\": \"mohammed@example.com\",\n      \"phone\": \"+970591234567\",\n      \"role\": \"customer\",\n      \"status\": \"active\",\n      \"governorate_id\": 1,\n      \"area_id\": 1,\n      \"email_verified_at\": \"2026-09-19T13:52:14.000000Z\"\n    }\n  },\n  \"message\": \"تم تسجيل الدخول بنجاح.\"\n}"
-						},
-						{
-							"name": "401 Wrong credentials (generic)",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"password\": \"WrongPass1!\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/login",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "login"]
-								}
-							},
-							"status": "Unauthorized",
-							"code": 401,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"البريد الإلكتروني أو كلمة المرور غير صحيحة.\",\n  \"errors\": []\n}"
-						},
-						{
-							"name": "403 Unverified email",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"email\": \"unverified@example.com\",\n  \"password\": \"Str0ng!Pass\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/login",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "login"]
-								}
-							},
-							"status": "Forbidden",
-							"code": 403,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"الرجاء تأكيد بريدك الإلكتروني أولاً. تم إرسال كود تحقق جديد.\",\n  \"errors\": [],\n  \"data\": {\n    \"requires_verification\": true,\n    \"email\": \"unverified@example.com\"\n  }\n}"
-						},
-						{
-							"name": "423 Account locked",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"password\": \"Str0ng!Pass\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/login",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "login"]
-								}
-							},
-							"status": "Locked",
-							"code": 423,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"الحساب مقفل مؤقتاً بسبب محاولات دخول فاشلة متكررة. الرجاء المحاولة لاحقاً.\",\n  \"errors\": []\n}"
-						}
-					]
-				},
-				{
-					"name": "Me",
-					"request": {
-						"method": "GET",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"url": {
-							"raw": "{{base_url}}/auth/me",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "me"]
-						},
-						"description": "Protected: requires auth:sanctum + verified.email + active.account. Returns the authenticated user's data."
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/auth/me",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "me"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 8,\n    \"full_name\": \"محمد أحمد\",\n    \"email\": \"mohammed@example.com\",\n    \"phone\": \"+970591234567\",\n    \"role\": \"customer\",\n    \"status\": \"active\",\n    \"governorate_id\": 1,\n    \"area_id\": 1,\n    \"email_verified_at\": \"2026-09-19T14:23:34.000000Z\"\n  },\n  \"message\": \"\"\n}"
-						},
-						{
-							"name": "401 No token",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/auth/me",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "me"]
-								}
-							},
-							"status": "Unauthorized",
-							"code": 401,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"غير مصرح بالوصول. الرجاء تسجيل الدخول.\",\n  \"errors\": []\n}"
-						}
-					]
-				},
-				{
-					"name": "Logout",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"url": {
-							"raw": "{{base_url}}/auth/logout",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "logout"]
-						},
-						"description": "Protected. Revokes only the token used for this request (not every session/device)."
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/auth/logout",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "logout"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"تم تسجيل الخروج بنجاح.\"\n}"
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "Password Reset",
-			"item": [
-				{
-					"name": "Forgot Password",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"mohammed@example.com\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/auth/forgot-password",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "forgot-password"]
-						},
-						"description": "Always returns the same neutral message, whether or not the email is registered — never reveals account existence. If registered, a purpose=reset code is sent (check storage/logs/laravel.log locally). Next step: Verify Email with purpose=reset to get a reset_token, then Reset Password."
-					},
-					"response": [
-						{
-							"name": "200 Success (same for any email)",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"email\": \"mohammed@example.com\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/forgot-password",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "forgot-password"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"إذا كان البريد الإلكتروني مسجلاً لدينا، سيصلك كود لاستعادة كلمة المرور.\"\n}"
-						}
-					]
-				},
-				{
-					"name": "Reset Password",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"reset_token\": \"paste the reset_token from Verify Email (purpose=reset) here\",\n  \"password\": \"NewStr0ng!Pass\",\n  \"password_confirmation\": \"NewStr0ng!Pass\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/auth/reset-password",
-							"host": ["{{base_url}}"],
-							"path": ["auth", "reset-password"]
-						},
-						"description": "reset_token comes from Verify Email's purpose=reset response, is valid for 10 minutes, and single-use. On success, every existing token/session for the user is revoked — they must log in again."
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"reset_token\": \"JoMIlwyvWA6aPvuChrPRICb2sOS4MSLg7QKNHp3bolrQQhhJRYXqEnxcmcV0ygO2\",\n  \"password\": \"NewStr0ng!Pass\",\n  \"password_confirmation\": \"NewStr0ng!Pass\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/reset-password",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "reset-password"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"تم تغيير كلمة المرور بنجاح. الرجاء تسجيل الدخول من جديد.\"\n}"
-						},
-						{
-							"name": "422 Invalid or expired token",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"reset_token\": \"not-a-real-token\",\n  \"password\": \"NewStr0ng!Pass\",\n  \"password_confirmation\": \"NewStr0ng!Pass\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/auth/reset-password",
-									"host": ["{{base_url}}"],
-									"path": ["auth", "reset-password"]
-								}
-							},
-							"status": "Unprocessable Content",
-							"code": 422,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"رمز الاستعادة غير صالح أو منتهي الصلاحية.\",\n  \"errors\": []\n}"
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "Reference Data",
-			"item": [
-				{
-					"name": "List Governorates",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/governorates",
-							"host": ["{{base_url}}"],
-							"path": ["governorates"]
-						}
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/governorates",
-									"host": ["{{base_url}}"],
-									"path": ["governorates"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": [\n    { \"id\": 1, \"name\": \"شمال غزة\" },\n    { \"id\": 2, \"name\": \"غزة\" },\n    { \"id\": 3, \"name\": \"دير البلح\" },\n    { \"id\": 4, \"name\": \"خان يونس\" },\n    { \"id\": 5, \"name\": \"رفح\" }\n  ],\n  \"message\": \"\"\n}"
-						}
-					]
-				},
-				{
-					"name": "List Areas by Governorate",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/governorates/1/areas",
-							"host": ["{{base_url}}"],
-							"path": ["governorates", "1", "areas"]
-						}
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/governorates/1/areas",
-									"host": ["{{base_url}}"],
-									"path": ["governorates", "1", "areas"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": [\n    { \"id\": 1, \"governorate_id\": 1, \"name\": \"بيت لاهيا\" },\n    { \"id\": 2, \"governorate_id\": 1, \"name\": \"بيت حانون\" },\n    { \"id\": 3, \"governorate_id\": 1, \"name\": \"جباليا\" },\n    { \"id\": 4, \"governorate_id\": 1, \"name\": \"أم النصر\" }\n  ],\n  \"message\": \"\"\n}"
-						},
-						{
-							"name": "404 Governorate not found",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/governorates/999/areas",
-									"host": ["{{base_url}}"],
-									"path": ["governorates", "999", "areas"]
-								}
-							},
-							"status": "Not Found",
-							"code": 404,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"المحافظة غير موجودة.\",\n  \"errors\": []\n}"
-						}
-					]
-				},
-				{
-					"name": "List Services",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/services",
-							"host": ["{{base_url}}"],
-							"path": ["services"]
-						}
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/services",
-									"host": ["{{base_url}}"],
-									"path": ["services"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": [\n    { \"id\": 1, \"name\": \"سباك\" },\n    { \"id\": 2, \"name\": \"كهربائي\" },\n    { \"id\": 3, \"name\": \"فني تكييف\" }\n  ],\n  \"message\": \"\"\n}"
-						}
-					]
-				},
-				{
-					"name": "List Activity Types",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/activity-types",
-							"host": ["{{base_url}}"],
-							"path": ["activity-types"]
-						}
-					},
-					"response": [
-						{
-							"name": "200 Success (empty until seeded via admin dashboard)",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/activity-types",
-									"host": ["{{base_url}}"],
-									"path": ["activity-types"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"\"\n}"
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "Profile",
-			"item": [
-				{
-					"name": "Upload File",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file",
-									"type": "file",
-									"src": []
-								}
-							]
-						},
-						"url": {
-							"raw": "{{base_url}}/uploads",
-							"host": ["{{base_url}}"],
-							"path": ["uploads"]
-						},
-						"description": "Open to guests — used during the registration wizard to upload photos/documents before the account exists. The returned `path` is what gets sent as e.g. `personal_photo_path` in the registration request body. Max 10 MB; JPG/PNG/PDF only (checked by actual content, not extension)."
-					},
-					"response": [
-						{
-							"name": "201 Success",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{ "key": "file", "type": "file", "src": [] }
-									]
-								},
-								"url": {
-									"raw": "{{base_url}}/uploads",
-									"host": ["{{base_url}}"],
-									"path": ["uploads"]
-								}
-							},
-							"status": "Created",
-							"code": 201,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"path\": \"uploads/q1Qy2uXlOYOSyxrfEbQTxFdkb49VOZvdNUYFjmkh.jpg\",\n    \"url\": \"http://localhost:8000/storage/uploads/q1Qy2uXlOYOSyxrfEbQTxFdkb49VOZvdNUYFjmkh.jpg\"\n  },\n  \"message\": \"تم رفع الملف بنجاح.\"\n}"
-						},
-						{
-							"name": "422 Validation error (missing file / wrong type / too large)",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": []
-								},
-								"url": {
-									"raw": "{{base_url}}/uploads",
-									"host": ["{{base_url}}"],
-									"path": ["uploads"]
-								}
-							},
-							"status": "Unprocessable Content",
-							"code": 422,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"الملف مطلوب.\",\n  \"errors\": {\n    \"file\": [\"الملف مطلوب.\"]\n  }\n}"
-						}
-					]
-				},
-				{
-					"name": "Get Profile",
-					"request": {
-						"method": "GET",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"url": {
-							"raw": "{{base_url}}/profile",
-							"host": ["{{base_url}}"],
-							"path": ["profile"]
-						},
-						"description": "Protected. Returns the authenticated user plus role-specific data (craftsman/institution/contractor) when applicable. Never includes id_selfie_path."
-					},
-					"response": [
-						{
-							"name": "200 Success (customer)",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/profile",
-									"host": ["{{base_url}}"],
-									"path": ["profile"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 11,\n    \"full_name\": \"محمد أحمد\",\n    \"email\": \"mohammed@example.com\",\n    \"phone\": \"+970591234567\",\n    \"role\": \"customer\",\n    \"status\": \"active\",\n    \"national_id\": null,\n    \"governorate_id\": 1,\n    \"area_id\": 1,\n    \"email_verified_at\": \"2026-09-19T15:02:29.000000Z\"\n  },\n  \"message\": \"\"\n}"
-						}
-					]
-				},
-				{
-					"name": "Update Profile",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" },
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"full_name\": \"محمد أحمد الجديد\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات.\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/profile",
-							"host": ["{{base_url}}"],
-							"path": ["profile"]
-						},
-						"description": "Protected. Partial update — send only the fields you want to change. Editable: full_name, governorate_id + area_id (together), and role-specific fields — bio/personal_photo_path (craftsman), description (institution/contractor), main_specialization/workers_count (contractor). Locked fields (national_id, commercial_registration_number, craft_id, license_file_path) are silently ignored even if sent — they simply don't exist in this endpoint's accepted fields."
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "PUT",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"full_name\": \"محمد أحمد الجديد\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/profile",
-									"host": ["{{base_url}}"],
-									"path": ["profile"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 11,\n    \"full_name\": \"محمد أحمد الجديد\",\n    \"email\": \"mohammed@example.com\",\n    \"phone\": \"+970591234567\",\n    \"role\": \"customer\",\n    \"status\": \"active\",\n    \"national_id\": null,\n    \"governorate_id\": 1,\n    \"area_id\": 1,\n    \"email_verified_at\": \"2026-09-19T15:02:29.000000Z\"\n  },\n  \"message\": \"تم تحديث الملف الشخصي بنجاح.\"\n}"
-						},
-						{
-							"name": "422 area_id does not belong to governorate_id",
-							"originalRequest": {
-								"method": "PUT",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"governorate_id\": 2,\n  \"area_id\": 1\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/profile",
-									"host": ["{{base_url}}"],
-									"path": ["profile"]
-								}
-							},
-							"status": "Unprocessable Content",
-							"code": 422,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{ "key": "Content-Type", "value": "application/json" }
-							],
-							"body": "{\n  \"success\": false,\n  \"message\": \"عنوان السكن المختار لا يتبع للمحافظة المحددة.\",\n  \"errors\": {\n    \"area_id\": [\"عنوان السكن المختار لا يتبع للمحافظة المحددة.\"]\n  }\n}"
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "Admin",
-			"item": [
-				{
-					"name": "List Pending Accounts",
-					"request": {
-						"method": "GET",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"url": {
-							"raw": "{{base_url}}/admin/accounts/pending?type=craftsman",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "accounts", "pending"],
-							"query": [
-								{ "key": "type", "value": "craftsman", "description": "Optional: craftsman, institution, or contractor. Omit to list all pending types." }
-							]
-						},
-						"description": "Admin only. Lists all professional accounts (craftsman/institution/contractor) with status=pending, optionally filtered by type."
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/admin/accounts/pending?type=craftsman",
-									"host": ["{{base_url}}"],
-									"path": ["admin", "accounts", "pending"],
-									"query": [{ "key": "type", "value": "craftsman" }]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [{ "key": "Content-Type", "value": "application/json" }],
-							"body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"account_type\": \"craftsman\",\n      \"account_id\": 2,\n      \"status\": \"pending\",\n      \"rejection_reason\": null,\n      \"verified_at\": null,\n      \"verified_by\": null,\n      \"user\": {\n        \"id\": 13,\n        \"full_name\": \"محمد الحرفي\",\n        \"email\": \"m***@example.com\",\n        \"phone\": \"+970591118800\",\n        \"status\": \"active\",\n        \"governorate_id\": 1,\n        \"area_id\": 1,\n        \"national_id\": null\n      },\n      \"craft_id\": 1,\n      \"bio\": null,\n      \"personal_photo_path\": \"uploads/photo.jpg\",\n      \"id_selfie_path\": \"uploads/selfie.jpg\",\n      \"avg_rating\": \"0.00\"\n    }\n  ],\n  \"message\": \"\"\n}"
-						},
-						{
-							"name": "403 Forbidden (not an admin)",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/admin/accounts/pending",
-									"host": ["{{base_url}}"],
-									"path": ["admin", "accounts", "pending"]
-								}
-							},
-							"status": "Forbidden",
-							"code": 403,
-							"_postman_previewlanguage": "json",
-							"header": [{ "key": "Content-Type", "value": "application/json" }],
-							"body": "{\n  \"success\": false,\n  \"message\": \"ليس لديك صلاحية للوصول إلى هذا المورد.\",\n  \"errors\": []\n}"
-						}
-					]
-				},
-				{
-					"name": "Show Account",
-					"request": {
-						"method": "GET",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"url": {
-							"raw": "{{base_url}}/admin/accounts/craftsman/2",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "accounts", "craftsman", "2"]
-						},
-						"description": "Admin only. Full detail of a single account, including admin-only files (id_selfie_path / license_file_path)."
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/admin/accounts/craftsman/2",
-									"host": ["{{base_url}}"],
-									"path": ["admin", "accounts", "craftsman", "2"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [{ "key": "Content-Type", "value": "application/json" }],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"pending\",\n    \"rejection_reason\": null,\n    \"verified_at\": null,\n    \"verified_by\": null,\n    \"user\": {\n      \"id\": 13,\n      \"full_name\": \"محمد الحرفي\",\n      \"email\": \"m***@example.com\",\n      \"phone\": \"+970591118800\",\n      \"status\": \"active\",\n      \"governorate_id\": 1,\n      \"area_id\": 1,\n      \"national_id\": null\n    },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"\"\n}"
-						},
-						{
-							"name": "404 Not Found",
-							"originalRequest": {
-								"method": "GET",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/admin/accounts/craftsman/999",
-									"host": ["{{base_url}}"],
-									"path": ["admin", "accounts", "craftsman", "999"]
-								}
-							},
-							"status": "Not Found",
-							"code": 404,
-							"_postman_previewlanguage": "json",
-							"header": [{ "key": "Content-Type", "value": "application/json" }],
-							"body": "{\n  \"success\": false,\n  \"message\": \"نوع الحساب غير صحيح، أو الحساب غير موجود.\",\n  \"errors\": []\n}"
-						}
-					]
-				},
-				{
-					"name": "Approve Account",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"url": {
-							"raw": "{{base_url}}/admin/accounts/craftsman/2/approve",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "accounts", "craftsman", "2", "approve"]
-						},
-						"description": "Admin only. Sets the role table's status to approved, stamps verified_at/verified_by, and logs the decision in account_reviews. This grants the trust badge — it does not itself change login access."
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/admin/accounts/craftsman/2/approve",
-									"host": ["{{base_url}}"],
-									"path": ["admin", "accounts", "craftsman", "2", "approve"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [{ "key": "Content-Type", "value": "application/json" }],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"approved\",\n    \"rejection_reason\": null,\n    \"verified_at\": \"2026-09-20T08:36:29.000000Z\",\n    \"verified_by\": 12,\n    \"user\": { \"id\": 13, \"full_name\": \"محمد الحرفي\", \"email\": \"m***@example.com\", \"phone\": \"+970591118800\", \"status\": \"active\", \"governorate_id\": 1, \"area_id\": 1, \"national_id\": null },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"تم اعتماد الحساب بنجاح.\"\n}"
-						}
-					]
-				},
-				{
-					"name": "Reject Account",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" },
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"reason\": \"الوثائق غير واضحة، الرجاء رفع صورة أوضح لبطاقة الهوية\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/admin/accounts/craftsman/2/reject",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "accounts", "craftsman", "2", "reject"]
-						},
-						"description": "Admin only. reason is mandatory. Sets the role table's status to rejected and stores rejection_reason; logs the decision in account_reviews. Does not affect login access."
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"reason\": \"الوثائق غير واضحة، الرجاء رفع صورة أوضح لبطاقة الهوية\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/accounts/craftsman/2/reject",
-									"host": ["{{base_url}}"],
-									"path": ["admin", "accounts", "craftsman", "2", "reject"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [{ "key": "Content-Type", "value": "application/json" }],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"rejected\",\n    \"rejection_reason\": \"الوثائق غير واضحة، الرجاء رفع صورة أوضح لبطاقة الهوية\",\n    \"verified_at\": null,\n    \"verified_by\": null,\n    \"user\": { \"id\": 13, \"full_name\": \"محمد الحرفي\", \"email\": \"m***@example.com\", \"phone\": \"+970591118800\", \"status\": \"active\", \"governorate_id\": 1, \"area_id\": 1, \"national_id\": null },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"تم رفض الحساب.\"\n}"
-						},
-						{
-							"name": "422 Validation error (missing reason)",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": { "mode": "raw", "raw": "{}" },
-								"url": {
-									"raw": "{{base_url}}/admin/accounts/craftsman/2/reject",
-									"host": ["{{base_url}}"],
-									"path": ["admin", "accounts", "craftsman", "2", "reject"]
-								}
-							},
-							"status": "Unprocessable Content",
-							"code": 422,
-							"_postman_previewlanguage": "json",
-							"header": [{ "key": "Content-Type", "value": "application/json" }],
-							"body": "{\n  \"success\": false,\n  \"message\": \"سبب الرفض مطلوب.\",\n  \"errors\": {\n    \"reason\": [\"سبب الرفض مطلوب.\"]\n  }\n}"
-						}
-					]
-				},
-				{
-					"name": "Suspend Account",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" },
-							{ "key": "Content-Type", "value": "application/json" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"reason\": \"بلاغات متكررة من عملاء بخصوص عدم الالتزام\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/admin/accounts/craftsman/2/suspend",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "accounts", "craftsman", "2", "suspend"]
-						},
-						"description": "Admin only. reason is mandatory. Unlike approve/reject, this sets users.status = suspended (blocks login for the whole account, not just the trust badge) and immediately revokes all of the user's active tokens. Logged in account_reviews."
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"reason\": \"بلاغات متكررة من عملاء بخصوص عدم الالتزام\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/admin/accounts/craftsman/2/suspend",
-									"host": ["{{base_url}}"],
-									"path": ["admin", "accounts", "craftsman", "2", "suspend"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [{ "key": "Content-Type", "value": "application/json" }],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"approved\",\n    \"rejection_reason\": null,\n    \"verified_at\": \"2026-09-20T08:36:29.000000Z\",\n    \"verified_by\": 12,\n    \"user\": { \"id\": 13, \"full_name\": \"محمد الحرفي\", \"email\": \"m***@example.com\", \"phone\": \"+970591118800\", \"status\": \"suspended\", \"governorate_id\": 1, \"area_id\": 1, \"national_id\": null },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"تم إيقاف الحساب.\"\n}"
-						},
-						{
-							"name": "422 Validation error (missing reason)",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Content-Type", "value": "application/json" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"body": { "mode": "raw", "raw": "{}" },
-								"url": {
-									"raw": "{{base_url}}/admin/accounts/craftsman/2/suspend",
-									"host": ["{{base_url}}"],
-									"path": ["admin", "accounts", "craftsman", "2", "suspend"]
-								}
-							},
-							"status": "Unprocessable Content",
-							"code": 422,
-							"_postman_previewlanguage": "json",
-							"header": [{ "key": "Content-Type", "value": "application/json" }],
-							"body": "{\n  \"success\": false,\n  \"message\": \"سبب الإيقاف مطلوب.\",\n  \"errors\": {\n    \"reason\": [\"سبب الإيقاف مطلوب.\"]\n  }\n}"
-						}
-					]
-				},
-				{
-					"name": "Activate Account",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}" },
-							{ "key": "Accept", "value": "application/json" }
-						],
-						"url": {
-							"raw": "{{base_url}}/admin/accounts/craftsman/2/activate",
-							"host": ["{{base_url}}"],
-							"path": ["admin", "accounts", "craftsman", "2", "activate"]
-						},
-						"description": "Admin only. Reverses suspend: sets users.status = active and clears suspension_reason. Logged in account_reviews."
-					},
-					"response": [
-						{
-							"name": "200 Success",
-							"originalRequest": {
-								"method": "POST",
-								"header": [
-									{ "key": "Authorization", "value": "Bearer {{token}}" },
-									{ "key": "Accept", "value": "application/json" }
-								],
-								"url": {
-									"raw": "{{base_url}}/admin/accounts/craftsman/2/activate",
-									"host": ["{{base_url}}"],
-									"path": ["admin", "accounts", "craftsman", "2", "activate"]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [{ "key": "Content-Type", "value": "application/json" }],
-							"body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"approved\",\n    \"rejection_reason\": null,\n    \"verified_at\": \"2026-09-20T08:36:29.000000Z\",\n    \"verified_by\": 12,\n    \"user\": { \"id\": 13, \"full_name\": \"محمد الحرفي\", \"email\": \"m***@example.com\", \"phone\": \"+970591118800\", \"status\": \"active\", \"governorate_id\": 1, \"area_id\": 1, \"national_id\": null },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"تم تفعيل الحساب من جديد.\"\n}"
-						}
-					]
-				}
-			]
-		}
-	]
+  "info": {
+    "_postman_id": "5f5a1e3a-9c1f-4b7a-9d5a-senaa-api-0001",
+    "name": "Senaa API",
+    "description": "Senaa marketplace API — Sprint 1 (authentication and registration). See docs/sprint-1-backend.md for the full backend specification.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://back-end-production-9aa3.up.railway.app/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"محمد أحمد\",\n  \"email\": \"mohammed@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"terms_accepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register/customer",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                "customer"
+              ]
+            },
+            "description": "Creates the account with email_verified_at = NULL and sends a 6-digit code (purpose=register) to the email. No token is returned here — call Verify Email next with the code (check storage/logs/laravel.log locally, since MAIL_MAILER=log) to receive the login token. phone accepts +970 or +972; it is normalized to +970XXXXXXXXX before storage."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"full_name\": \"محمد أحمد\",\n  \"email\": \"mohammed@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"terms_accepted\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/register/customer",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register",
+                    "customer"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"m***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
+            },
+            {
+              "name": "422 Validation error (duplicate email)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"full_name\": \"محمد أحمد\",\n  \"email\": \"mohammed@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"terms_accepted\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/register/customer",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register",
+                    "customer"
+                  ]
+                }
+              },
+              "status": "Unprocessable Content",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"هذا البريد الإلكتروني مستخدم بالفعل.\",\n  \"errors\": {\n    \"email\": [\"هذا البريد الإلكتروني مستخدم بالفعل.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Register Craftsman",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"خالد يوسف\",\n  \"email\": \"khaled@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/photo.jpg\",\n  \"id_selfie_path\": \"uploads/selfie.jpg\",\n  \"craft_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات في تركيب وصيانة الأنابيب.\",\n  \"terms_accepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register/craftsman",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                "craftsman"
+              ]
+            },
+            "description": "One request for both wizard steps (screens 4+5). personal_photo_path and id_selfie_path must be real paths already returned by POST /api/uploads — call that first for each file. id_selfie_path is admin-only and is never returned in any response.\n\ncraft_id: pick from GET /api/services. For the \"other\" option in the craft picker, omit craft_id and send custom_craft_name instead (free text) — the backend normalizes it (strips diacritics, unifies alef/hamza forms) and either reuses a matching existing craft or creates a new one automatically, then stores its id as craft_id. Exactly one of craft_id / custom_craft_name is required.\n\nbio is required, minimum 10 characters."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"full_name\": \"خالد يوسف\",\n  \"email\": \"khaled@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/photo.jpg\",\n  \"id_selfie_path\": \"uploads/selfie.jpg\",\n  \"craft_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات في تركيب وصيانة الأنابيب.\",\n  \"terms_accepted\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/register/craftsman",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register",
+                    "craftsman"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"k***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
+            },
+            {
+              "name": "201 Success (custom craft via \"other\")",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"full_name\": \"سامي عودة\",\n  \"email\": \"sami@example.com\",\n  \"phone\": \"+970591234569\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/photo.jpg\",\n  \"id_selfie_path\": \"uploads/selfie.jpg\",\n  \"custom_craft_name\": \"صانع فخار\",\n  \"bio\": \"حرفي متمرس بصناعة الفخار التقليدي منذ 8 سنوات.\",\n  \"terms_accepted\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/register/craftsman",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register",
+                    "craftsman"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"s***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
+            },
+            {
+              "name": "422 Validation error (photo not uploaded first)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"full_name\": \"خالد يوسف\",\n  \"email\": \"khaled2@example.com\",\n  \"phone\": \"+970591234568\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"personal_photo_path\": \"uploads/does-not-exist.jpg\",\n  \"id_selfie_path\": \"uploads/does-not-exist.jpg\",\n  \"craft_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات في تركيب وصيانة الأنابيب.\",\n  \"terms_accepted\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/register/craftsman",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register",
+                    "craftsman"
+                  ]
+                }
+              },
+              "status": "Unprocessable Content",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"الصورة الشخصية غير موجودة. الرجاء رفعها أولاً عبر /api/uploads.\",\n  \"errors\": {\n    \"personal_photo_path\": [\"الصورة الشخصية غير موجودة. الرجاء رفعها أولاً عبر /api/uploads.\"],\n    \"id_selfie_path\": [\"صورة الهوية غير موجودة. الرجاء رفعها أولاً عبر /api/uploads.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Register Institution",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type\": \"إغاثة إنسانية\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"description\": \"مؤسسة خيرية تعمل في قطاع غزة.\",\n  \"terms_accepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register/institution",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                "institution"
+              ]
+            },
+            "description": "One request for both wizard steps (screens 6+7). license_file_path must be a real path already returned by POST /api/uploads. activity_type is free text (no fixed list). description is required."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type\": \"إغاثة إنسانية\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"description\": \"مؤسسة خيرية تعمل في قطاع غزة.\",\n  \"terms_accepted\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/register/institution",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register",
+                    "institution"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"i***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
+            },
+            {
+              "name": "422 Validation error (duplicate commercial registration number)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"institution_name\": \"مؤسسة الأمل الخيرية\",\n  \"commercial_registration_number\": \"CR-1234567\",\n  \"email\": \"institution2@example.com\",\n  \"phone\": \"+970591234568\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"activity_type\": \"إغاثة إنسانية\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"description\": \"مؤسسة خيرية تعمل في قطاع غزة.\",\n  \"terms_accepted\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/register/institution",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register",
+                    "institution"
+                  ]
+                }
+              },
+              "status": "Unprocessable Content",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"رقم التسجيل التجاري مستخدم بالفعل.\",\n  \"errors\": {\n    \"commercial_registration_number\": [\"رقم التسجيل التجاري مستخدم بالفعل.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Register Contractor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"أحمد محمود سالم عبدالله\",\n  \"national_id\": \"123456789\",\n  \"email\": \"contractor@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"workers_count\": 15,\n  \"main_specialization\": \"بناء وتشييد\",\n  \"description\": \"مقاول بخبرة واسعة.\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"terms_accepted\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register/contractor",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register",
+                "contractor"
+              ]
+            },
+            "description": "One request for all three wizard steps (screens 8+9+10). license_file_path must be a real path already returned by POST /api/uploads. national_id is 9 digits and unique — collected only for contractors."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"full_name\": \"أحمد محمود سالم عبدالله\",\n  \"national_id\": \"123456789\",\n  \"email\": \"contractor@example.com\",\n  \"phone\": \"+970591234567\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"workers_count\": 15,\n  \"main_specialization\": \"بناء وتشييد\",\n  \"description\": \"مقاول بخبرة واسعة.\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"terms_accepted\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/register/contractor",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register",
+                    "contractor"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"email\": \"c***@example.com\"\n  },\n  \"message\": \"تم إنشاء الحساب بنجاح. تم إرسال رمز التحقق إلى بريدك الإلكتروني.\"\n}"
+            },
+            {
+              "name": "422 Validation error (invalid national_id length)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"full_name\": \"أحمد محمود سالم عبدالله\",\n  \"national_id\": \"12345\",\n  \"email\": \"contractor2@example.com\",\n  \"phone\": \"+970591234568\",\n  \"password\": \"Str0ng!Pass\",\n  \"password_confirmation\": \"Str0ng!Pass\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"workers_count\": 15,\n  \"main_specialization\": \"بناء وتشييد\",\n  \"license_file_path\": \"uploads/license.pdf\",\n  \"terms_accepted\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/register/contractor",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register",
+                    "contractor"
+                  ]
+                }
+              },
+              "status": "Unprocessable Content",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"رقم الهوية يجب أن يتكون من 9 أرقام.\",\n  \"errors\": {\n    \"national_id\": [\"رقم الهوية يجب أن يتكون من 9 أرقام.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const body = pm.response.json();",
+                  "    if (body.data && body.data.token) {",
+                  "        pm.collectionVariables.set('token', body.data.token);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"code\": \"123456\",\n  \"purpose\": \"register\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/verify-email",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "verify-email"
+              ]
+            },
+            "description": "purpose=register on success sets email_verified_at, issues the Sanctum login token (auto-saved to {{token}} by the Tests script here), and logs the user in. purpose=reset on success returns a short-lived reset_token instead (not a login token) — used by Reset Password. Get the real code from storage/logs/laravel.log locally (MAIL_MAILER=log)."
+          },
+          "response": [
+            {
+              "name": "200 Success (register)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"code\": \"123456\",\n  \"purpose\": \"register\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/verify-email",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "verify-email"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"token\": \"1|M78XjOcV8vizcekHw8EKC6TrNQ2LCH7WDfBfAD5e26a8f156\",\n    \"user\": {\n      \"id\": 6,\n      \"full_name\": \"محمد أحمد\",\n      \"email\": \"mohammed@example.com\",\n      \"phone\": \"+970591234567\",\n      \"role\": \"customer\",\n      \"status\": \"active\",\n      \"governorate_id\": 1,\n      \"area_id\": 1,\n      \"email_verified_at\": \"2026-09-19T13:44:09.000000Z\"\n    }\n  },\n  \"message\": \"تم تأكيد البريد الإلكتروني بنجاح.\"\n}"
+            },
+            {
+              "name": "422 Wrong or expired code",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"code\": \"000000\",\n  \"purpose\": \"register\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/verify-email",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "verify-email"
+                  ]
+                }
+              },
+              "status": "Unprocessable Content",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"الكود غير صحيح أو منتهي الصلاحية.\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Resend Code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"purpose\": \"register\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/resend-code",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "resend-code"
+              ]
+            },
+            "description": "Subject to §6.3: 45-second cooldown and 3 sends/hour per email+purpose. Wrong verify-email attempts never count against this limit — only actual sends do."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"purpose\": \"register\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/resend-code",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "resend-code"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"تم إرسال كود جديد إلى بريدك الإلكتروني.\"\n}"
+            },
+            {
+              "name": "429 Cooldown / limit reached",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"purpose\": \"register\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/resend-code",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "resend-code"
+                  ]
+                }
+              },
+              "status": "Too Many Requests",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"الرجاء الانتظار 45 ثانية قبل طلب كود جديد.\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const body = pm.response.json();",
+                  "    if (body.data && body.data.token) {",
+                  "        pm.collectionVariables.set('token', body.data.token);",
+                  "    }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"password\": \"Str0ng!Pass\",\n  \"remember\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "email_verified_at is checked before anything else — an unverified account gets a 403 with a fresh code sent, not a credentials error. 5 consecutive wrong passwords lock the account for 15 minutes (423). remember=true issues a 30-day token instead of the default 24-hour one. Auto-saves the token to {{token}} on success."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"password\": \"Str0ng!Pass\",\n  \"remember\": false\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"token\": \"3|bnG3nCMGiU5qO3JPPhNpAfRIVugHgP9DFRX3lh5v88e97203\",\n    \"user\": {\n      \"id\": 7,\n      \"full_name\": \"محمد أحمد\",\n      \"email\": \"mohammed@example.com\",\n      \"phone\": \"+970591234567\",\n      \"role\": \"customer\",\n      \"status\": \"active\",\n      \"governorate_id\": 1,\n      \"area_id\": 1,\n      \"email_verified_at\": \"2026-09-19T13:52:14.000000Z\"\n    }\n  },\n  \"message\": \"تم تسجيل الدخول بنجاح.\"\n}"
+            },
+            {
+              "name": "401 Wrong credentials (generic)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"password\": \"WrongPass1!\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"البريد الإلكتروني أو كلمة المرور غير صحيحة.\",\n  \"errors\": []\n}"
+            },
+            {
+              "name": "403 Unverified email",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"unverified@example.com\",\n  \"password\": \"Str0ng!Pass\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"الرجاء تأكيد بريدك الإلكتروني أولاً. تم إرسال كود تحقق جديد.\",\n  \"errors\": [],\n  \"data\": {\n    \"requires_verification\": true,\n    \"email\": \"unverified@example.com\"\n  }\n}"
+            },
+            {
+              "name": "423 Account locked",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"mohammed@example.com\",\n  \"password\": \"Str0ng!Pass\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "status": "Locked",
+              "code": 423,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"الحساب مقفل مؤقتاً بسبب محاولات دخول فاشلة متكررة. الرجاء المحاولة لاحقاً.\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Protected: requires auth:sanctum + verified.email + active.account. Returns the authenticated user's data."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/auth/me",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 8,\n    \"full_name\": \"محمد أحمد\",\n    \"email\": \"mohammed@example.com\",\n    \"phone\": \"+970591234567\",\n    \"role\": \"customer\",\n    \"status\": \"active\",\n    \"governorate_id\": 1,\n    \"area_id\": 1,\n    \"email_verified_at\": \"2026-09-19T14:23:34.000000Z\"\n  },\n  \"message\": \"\"\n}"
+            },
+            {
+              "name": "401 No token",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/auth/me",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "me"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"غير مصرح بالوصول. الرجاء تسجيل الدخول.\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Protected. Revokes only the token used for this request (not every session/device)."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/auth/logout",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "logout"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"تم تسجيل الخروج بنجاح.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Password Reset",
+      "item": [
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mohammed@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/forgot-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "forgot-password"
+              ]
+            },
+            "description": "Always returns the same neutral message, whether or not the email is registered — never reveals account existence. If registered, a purpose=reset code is sent (check storage/logs/laravel.log locally). Next step: Verify Email with purpose=reset to get a reset_token, then Reset Password."
+          },
+          "response": [
+            {
+              "name": "200 Success (same for any email)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"mohammed@example.com\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/forgot-password",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "forgot-password"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"إذا كان البريد الإلكتروني مسجلاً لدينا، سيصلك كود لاستعادة كلمة المرور.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reset_token\": \"paste the reset_token from Verify Email (purpose=reset) here\",\n  \"password\": \"NewStr0ng!Pass\",\n  \"password_confirmation\": \"NewStr0ng!Pass\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/reset-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ]
+            },
+            "description": "reset_token comes from Verify Email's purpose=reset response, is valid for 10 minutes, and single-use. On success, every existing token/session for the user is revoked — they must log in again."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reset_token\": \"JoMIlwyvWA6aPvuChrPRICb2sOS4MSLg7QKNHp3bolrQQhhJRYXqEnxcmcV0ygO2\",\n  \"password\": \"NewStr0ng!Pass\",\n  \"password_confirmation\": \"NewStr0ng!Pass\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/reset-password",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "reset-password"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"تم تغيير كلمة المرور بنجاح. الرجاء تسجيل الدخول من جديد.\"\n}"
+            },
+            {
+              "name": "422 Invalid or expired token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reset_token\": \"not-a-real-token\",\n  \"password\": \"NewStr0ng!Pass\",\n  \"password_confirmation\": \"NewStr0ng!Pass\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/reset-password",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "reset-password"
+                  ]
+                }
+              },
+              "status": "Unprocessable Content",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"رمز الاستعادة غير صالح أو منتهي الصلاحية.\",\n  \"errors\": []\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Reference Data",
+      "item": [
+        {
+          "name": "List Governorates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/governorates",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "governorates"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/governorates",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "governorates"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    { \"id\": 1, \"name\": \"شمال غزة\" },\n    { \"id\": 2, \"name\": \"غزة\" },\n    { \"id\": 3, \"name\": \"دير البلح\" },\n    { \"id\": 4, \"name\": \"خان يونس\" },\n    { \"id\": 5, \"name\": \"رفح\" }\n  ],\n  \"message\": \"\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Areas by Governorate",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/governorates/1/areas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "governorates",
+                "1",
+                "areas"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/governorates/1/areas",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "governorates",
+                    "1",
+                    "areas"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    { \"id\": 1, \"governorate_id\": 1, \"name\": \"بيت لاهيا\" },\n    { \"id\": 2, \"governorate_id\": 1, \"name\": \"بيت حانون\" },\n    { \"id\": 3, \"governorate_id\": 1, \"name\": \"جباليا\" },\n    { \"id\": 4, \"governorate_id\": 1, \"name\": \"أم النصر\" }\n  ],\n  \"message\": \"\"\n}"
+            },
+            {
+              "name": "404 Governorate not found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/governorates/999/areas",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "governorates",
+                    "999",
+                    "areas"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"المحافظة غير موجودة.\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Services",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/services",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "services"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/services",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "services"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    { \"id\": 1, \"name\": \"سباك\" },\n    { \"id\": 2, \"name\": \"كهربائي\" },\n    { \"id\": 3, \"name\": \"فني تكييف\" }\n  ],\n  \"message\": \"\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Activity Types",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/activity-types",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "activity-types"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success (empty until seeded via admin dashboard)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/activity-types",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "activity-types"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Upload File",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/uploads",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "uploads"
+              ]
+            },
+            "description": "Open to guests — used during the registration wizard to upload photos/documents before the account exists. The returned `path` is what gets sent as e.g. `personal_photo_path` in the registration request body. Max 10 MB; JPG/PNG/PDF only (checked by actual content, not extension)."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": []
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{base_url}}/uploads",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "uploads"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"path\": \"uploads/q1Qy2uXlOYOSyxrfEbQTxFdkb49VOZvdNUYFjmkh.jpg\",\n    \"url\": \"http://localhost:8000/storage/uploads/q1Qy2uXlOYOSyxrfEbQTxFdkb49VOZvdNUYFjmkh.jpg\"\n  },\n  \"message\": \"تم رفع الملف بنجاح.\"\n}"
+            },
+            {
+              "name": "422 Validation error (missing file / wrong type / too large)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": []
+                },
+                "url": {
+                  "raw": "{{base_url}}/uploads",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "uploads"
+                  ]
+                }
+              },
+              "status": "Unprocessable Content",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"الملف مطلوب.\",\n  \"errors\": {\n    \"file\": [\"الملف مطلوب.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            },
+            "description": "Protected. Returns the authenticated user plus role-specific data (craftsman/institution/contractor) when applicable. Never includes id_selfie_path."
+          },
+          "response": [
+            {
+              "name": "200 Success (customer)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/profile",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "profile"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 11,\n    \"full_name\": \"محمد أحمد\",\n    \"email\": \"mohammed@example.com\",\n    \"phone\": \"+970591234567\",\n    \"role\": \"customer\",\n    \"status\": \"active\",\n    \"national_id\": null,\n    \"governorate_id\": 1,\n    \"area_id\": 1,\n    \"email_verified_at\": \"2026-09-19T15:02:29.000000Z\"\n  },\n  \"message\": \"\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"محمد أحمد الجديد\",\n  \"governorate_id\": 1,\n  \"area_id\": 1,\n  \"bio\": \"سباك بخبرة 10 سنوات.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            },
+            "description": "Protected. Partial update — send only the fields you want to change. Editable: full_name, governorate_id + area_id (together), and role-specific fields — bio/personal_photo_path (craftsman), description (institution/contractor), main_specialization/workers_count (contractor). Locked fields (national_id, commercial_registration_number, craft_id, license_file_path) are silently ignored even if sent — they simply don't exist in this endpoint's accepted fields."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"full_name\": \"محمد أحمد الجديد\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/profile",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "profile"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 11,\n    \"full_name\": \"محمد أحمد الجديد\",\n    \"email\": \"mohammed@example.com\",\n    \"phone\": \"+970591234567\",\n    \"role\": \"customer\",\n    \"status\": \"active\",\n    \"national_id\": null,\n    \"governorate_id\": 1,\n    \"area_id\": 1,\n    \"email_verified_at\": \"2026-09-19T15:02:29.000000Z\"\n  },\n  \"message\": \"تم تحديث الملف الشخصي بنجاح.\"\n}"
+            },
+            {
+              "name": "422 area_id does not belong to governorate_id",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"governorate_id\": 2,\n  \"area_id\": 1\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/profile",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "profile"
+                  ]
+                }
+              },
+              "status": "Unprocessable Content",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"عنوان السكن المختار لا يتبع للمحافظة المحددة.\",\n  \"errors\": {\n    \"area_id\": [\"عنوان السكن المختار لا يتبع للمحافظة المحددة.\"]\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "List Pending Accounts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/accounts/pending?type=craftsman",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "accounts",
+                "pending"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "craftsman",
+                  "description": "Optional: craftsman, institution, or contractor. Omit to list all pending types."
+                }
+              ]
+            },
+            "description": "Admin only. Lists all professional accounts (craftsman/institution/contractor) with status=pending, optionally filtered by type."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/admin/accounts/pending?type=craftsman",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "accounts",
+                    "pending"
+                  ],
+                  "query": [
+                    {
+                      "key": "type",
+                      "value": "craftsman"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"account_type\": \"craftsman\",\n      \"account_id\": 2,\n      \"status\": \"pending\",\n      \"rejection_reason\": null,\n      \"verified_at\": null,\n      \"verified_by\": null,\n      \"user\": {\n        \"id\": 13,\n        \"full_name\": \"محمد الحرفي\",\n        \"email\": \"m***@example.com\",\n        \"phone\": \"+970591118800\",\n        \"status\": \"active\",\n        \"governorate_id\": 1,\n        \"area_id\": 1,\n        \"national_id\": null\n      },\n      \"craft_id\": 1,\n      \"bio\": null,\n      \"personal_photo_path\": \"uploads/photo.jpg\",\n      \"id_selfie_path\": \"uploads/selfie.jpg\",\n      \"avg_rating\": \"0.00\"\n    }\n  ],\n  \"message\": \"\"\n}"
+            },
+            {
+              "name": "403 Forbidden (not an admin)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/admin/accounts/pending",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "accounts",
+                    "pending"
+                  ]
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"ليس لديك صلاحية للوصول إلى هذا المورد.\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Show Account",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/accounts/craftsman/2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "accounts",
+                "craftsman",
+                "2"
+              ]
+            },
+            "description": "Admin only. Full detail of a single account, including admin-only files (id_selfie_path / license_file_path)."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/admin/accounts/craftsman/2",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "accounts",
+                    "craftsman",
+                    "2"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"pending\",\n    \"rejection_reason\": null,\n    \"verified_at\": null,\n    \"verified_by\": null,\n    \"user\": {\n      \"id\": 13,\n      \"full_name\": \"محمد الحرفي\",\n      \"email\": \"m***@example.com\",\n      \"phone\": \"+970591118800\",\n      \"status\": \"active\",\n      \"governorate_id\": 1,\n      \"area_id\": 1,\n      \"national_id\": null\n    },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"\"\n}"
+            },
+            {
+              "name": "404 Not Found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/admin/accounts/craftsman/999",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "accounts",
+                    "craftsman",
+                    "999"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"نوع الحساب غير صحيح، أو الحساب غير موجود.\",\n  \"errors\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Approve Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/accounts/craftsman/2/approve",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "accounts",
+                "craftsman",
+                "2",
+                "approve"
+              ]
+            },
+            "description": "Admin only. Sets the role table's status to approved, stamps verified_at/verified_by, and logs the decision in account_reviews. This grants the trust badge — it does not itself change login access."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/admin/accounts/craftsman/2/approve",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "accounts",
+                    "craftsman",
+                    "2",
+                    "approve"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"approved\",\n    \"rejection_reason\": null,\n    \"verified_at\": \"2026-09-20T08:36:29.000000Z\",\n    \"verified_by\": 12,\n    \"user\": { \"id\": 13, \"full_name\": \"محمد الحرفي\", \"email\": \"m***@example.com\", \"phone\": \"+970591118800\", \"status\": \"active\", \"governorate_id\": 1, \"area_id\": 1, \"national_id\": null },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"تم اعتماد الحساب بنجاح.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Reject Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"الوثائق غير واضحة، الرجاء رفع صورة أوضح لبطاقة الهوية\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/accounts/craftsman/2/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "accounts",
+                "craftsman",
+                "2",
+                "reject"
+              ]
+            },
+            "description": "Admin only. reason is mandatory. Sets the role table's status to rejected and stores rejection_reason; logs the decision in account_reviews. Does not affect login access."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"الوثائق غير واضحة، الرجاء رفع صورة أوضح لبطاقة الهوية\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/admin/accounts/craftsman/2/reject",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "accounts",
+                    "craftsman",
+                    "2",
+                    "reject"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"rejected\",\n    \"rejection_reason\": \"الوثائق غير واضحة، الرجاء رفع صورة أوضح لبطاقة الهوية\",\n    \"verified_at\": null,\n    \"verified_by\": null,\n    \"user\": { \"id\": 13, \"full_name\": \"محمد الحرفي\", \"email\": \"m***@example.com\", \"phone\": \"+970591118800\", \"status\": \"active\", \"governorate_id\": 1, \"area_id\": 1, \"national_id\": null },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"تم رفض الحساب.\"\n}"
+            },
+            {
+              "name": "422 Validation error (missing reason)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/admin/accounts/craftsman/2/reject",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "accounts",
+                    "craftsman",
+                    "2",
+                    "reject"
+                  ]
+                }
+              },
+              "status": "Unprocessable Content",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"سبب الرفض مطلوب.\",\n  \"errors\": {\n    \"reason\": [\"سبب الرفض مطلوب.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Suspend Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"بلاغات متكررة من عملاء بخصوص عدم الالتزام\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/accounts/craftsman/2/suspend",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "accounts",
+                "craftsman",
+                "2",
+                "suspend"
+              ]
+            },
+            "description": "Admin only. reason is mandatory. Unlike approve/reject, this sets users.status = suspended (blocks login for the whole account, not just the trust badge) and immediately revokes all of the user's active tokens. Logged in account_reviews."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"بلاغات متكررة من عملاء بخصوص عدم الالتزام\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/admin/accounts/craftsman/2/suspend",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "accounts",
+                    "craftsman",
+                    "2",
+                    "suspend"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"approved\",\n    \"rejection_reason\": null,\n    \"verified_at\": \"2026-09-20T08:36:29.000000Z\",\n    \"verified_by\": 12,\n    \"user\": { \"id\": 13, \"full_name\": \"محمد الحرفي\", \"email\": \"m***@example.com\", \"phone\": \"+970591118800\", \"status\": \"suspended\", \"governorate_id\": 1, \"area_id\": 1, \"national_id\": null },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"تم إيقاف الحساب.\"\n}"
+            },
+            {
+              "name": "422 Validation error (missing reason)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/admin/accounts/craftsman/2/suspend",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "accounts",
+                    "craftsman",
+                    "2",
+                    "suspend"
+                  ]
+                }
+              },
+              "status": "Unprocessable Content",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"سبب الإيقاف مطلوب.\",\n  \"errors\": {\n    \"reason\": [\"سبب الإيقاف مطلوب.\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Activate Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/accounts/craftsman/2/activate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "accounts",
+                "craftsman",
+                "2",
+                "activate"
+              ]
+            },
+            "description": "Admin only. Reverses suspend: sets users.status = active and clears suspension_reason. Logged in account_reviews."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/admin/accounts/craftsman/2/activate",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "accounts",
+                    "craftsman",
+                    "2",
+                    "activate"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"account_type\": \"craftsman\",\n    \"account_id\": 2,\n    \"status\": \"approved\",\n    \"rejection_reason\": null,\n    \"verified_at\": \"2026-09-20T08:36:29.000000Z\",\n    \"verified_by\": 12,\n    \"user\": { \"id\": 13, \"full_name\": \"محمد الحرفي\", \"email\": \"m***@example.com\", \"phone\": \"+970591118800\", \"status\": \"active\", \"governorate_id\": 1, \"area_id\": 1, \"national_id\": null },\n    \"craft_id\": 1,\n    \"bio\": null,\n    \"personal_photo_path\": \"uploads/photo.jpg\",\n    \"id_selfie_path\": \"uploads/selfie.jpg\",\n    \"avg_rating\": \"0.00\"\n  },\n  \"message\": \"تم تفعيل الحساب من جديد.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Craftsmen",
+      "item": [
+        {
+          "name": "List Craftsmen",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/craftsmen?service_id=1&area_id=1&min_rating=4&trusted=1&search=كهربائي&page=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "craftsmen?service_id=1&area_id=1&min_rating=4&trusted=1&search=كهربائي&page=1"
+              ]
+            },
+            "description": "Public. Filters: service_id, area_id, governorate_id, min_rating (1-5), trusted=1 (approved only), search (name or craft), page. Rejected craftsmen and suspended users never appear."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"craftsmen\": [\n      {\n        \"id\": 1,\n        \"full_name\": \"توفيق مصباح\",\n        \"craft\": {\n          \"id\": 1,\n          \"name\": \"كهربائي\"\n        },\n        \"personal_photo_path\": \"craftsmen/photos/abc.jpg\",\n        \"bio\": \"كهربائي محترف من غزة\",\n        \"years_experience\": 15,\n        \"governorate_id\": 2,\n        \"area_id\": 5,\n        \"is_trusted\": true,\n        \"is_available\": true,\n        \"avg_rating\": \"4.90\",\n        \"reviews_count\": 210\n      }\n    ],\n    \"meta\": {\n      \"current_page\": 1,\n      \"last_page\": 1,\n      \"total\": 1\n    }\n  },\n  \"message\": \"\"\n}",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/craftsmen?service_id=1&area_id=1&min_rating=4&trusted=1&search=كهربائي&page=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "craftsmen?service_id=1&area_id=1&min_rating=4&trusted=1&search=كهربائي&page=1"
+                  ]
+                },
+                "description": "Public. Filters: service_id, area_id, governorate_id, min_rating (1-5), trusted=1 (approved only), search (name or craft), page. Rejected craftsmen and suspended users never appear."
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Craftsmen - Featured",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/craftsmen/featured",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "craftsmen",
+                "featured"
+              ]
+            },
+            "description": "\"حرفيو الشهر المتميزون\": public. The top 10 approved (trusted) craftsmen ordered by average rating."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"full_name\": \"توفيق مصباح\",\n      \"craft\": {\n        \"id\": 1,\n        \"name\": \"كهربائي\"\n      },\n      \"personal_photo_path\": \"craftsmen/photos/abc.jpg\",\n      \"bio\": \"كهربائي محترف من غزة\",\n      \"years_experience\": 15,\n      \"governorate_id\": 2,\n      \"area_id\": 5,\n      \"is_trusted\": true,\n      \"is_available\": true,\n      \"avg_rating\": \"4.90\",\n      \"reviews_count\": 210\n    }\n  ],\n  \"message\": \"\"\n}",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/craftsmen/featured",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "craftsmen",
+                    "featured"
+                  ]
+                },
+                "description": "\"حرفيو الشهر المتميزون\": public. The top 10 approved (trusted) craftsmen ordered by average rating."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Service Requests",
+      "item": [
+        {
+          "name": "Create Service Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"craftsman_id\": 1,\n  \"service_id\": 1,\n  \"description\": \"بحاجة لتصليح تمديدات كهربائية بالمطبخ\",\n  \"preferred_date\": \"2026-11-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/service-requests",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "service-requests"
+              ]
+            },
+            "description": "Protected. Any authenticated, non-admin user may send a request (not only customer — an institution or contractor may also request a service)."
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 10,\n    \"customer\": {\n      \"id\": 3,\n      \"full_name\": \"سامي العلي\"\n    },\n    \"craftsman\": {\n      \"id\": 1,\n      \"full_name\": \"توفيق مصباح\"\n    },\n    \"service\": {\n      \"id\": 1,\n      \"name\": \"كهربائي\"\n    },\n    \"description\": \"بحاجة لتصليح تمديدات كهربائية بالمطبخ\",\n    \"preferred_date\": \"2026-11-01\",\n    \"status\": \"pending\",\n    \"rejection_reason\": null,\n    \"created_at\": \"2026-10-04T10:00:00.000000Z\"\n  },\n  \"message\": \"تم إرسال طلب الخدمة بنجاح.\"\n}",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"craftsman_id\": 1,\n  \"service_id\": 1,\n  \"description\": \"بحاجة لتصليح تمديدات كهربائية بالمطبخ\",\n  \"preferred_date\": \"2026-11-01\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/service-requests",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "service-requests"
+                  ]
+                },
+                "description": "Protected. Any authenticated, non-admin user may send a request (not only customer — an institution or contractor may also request a service)."
+              }
+            }
+          ]
+        },
+        {
+          "name": "List My Service Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/service-requests?status=pending",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "service-requests?status=pending"
+              ]
+            },
+            "description": "Protected. Returns the requests the authenticated user sent (as a customer) or received (as a craftsman). Optional status filter."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [\n    {\n      \"id\": 10,\n      \"customer\": {\n        \"id\": 3,\n        \"full_name\": \"سامي العلي\"\n      },\n      \"craftsman\": {\n        \"id\": 1,\n        \"full_name\": \"توفيق مصباح\"\n      },\n      \"service\": {\n        \"id\": 1,\n        \"name\": \"كهربائي\"\n      },\n      \"description\": \"بحاجة لتصليح تمديدات كهربائية بالمطبخ\",\n      \"preferred_date\": \"2026-11-01\",\n      \"status\": \"pending\",\n      \"rejection_reason\": null,\n      \"reviewed\": false,\n      \"created_at\": \"2026-10-04T10:00:00.000000Z\"\n    }\n  ],\n  \"message\": \"\"\n}",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/service-requests?status=pending",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "service-requests?status=pending"
+                  ]
+                },
+                "description": "Protected. Returns the requests the authenticated user sent (as a customer) or received (as a craftsman). Optional status filter."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Accept Service Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/service-requests/10/accept",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "service-requests",
+                "10",
+                "accept"
+              ]
+            },
+            "description": "Protected. Only the craftsman the request was sent to may accept it, while it is still pending."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 10,\n    \"status\": \"accepted\"\n  },\n  \"message\": \"تم قبول الطلب.\"\n}",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/service-requests/10/accept",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "service-requests",
+                    "10",
+                    "accept"
+                  ]
+                },
+                "description": "Protected. Only the craftsman the request was sent to may accept it, while it is still pending."
+              }
+            },
+            {
+              "name": "403 Not the owning craftsman",
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"ليس لديك صلاحية على هذا الطلب.\",\n  \"errors\": []\n}",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/service-requests/10/accept",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "service-requests",
+                    "10",
+                    "accept"
+                  ]
+                },
+                "description": "Protected. Only the craftsman the request was sent to may accept it, while it is still pending."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Reject Service Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"غير متاح حالياً\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/service-requests/10/reject",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "service-requests",
+                "10",
+                "reject"
+              ]
+            },
+            "description": "Protected. Only the craftsman the request was sent to may reject it, while it is still pending. Reason is mandatory."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 10,\n    \"status\": \"rejected\"\n  },\n  \"message\": \"تم رفض الطلب.\"\n}",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"غير متاح حالياً\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/service-requests/10/reject",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "service-requests",
+                    "10",
+                    "reject"
+                  ]
+                },
+                "description": "Protected. Only the craftsman the request was sent to may reject it, while it is still pending. Reason is mandatory."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Complete Service Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/service-requests/10/complete",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "service-requests",
+                "10",
+                "complete"
+              ]
+            },
+            "description": "Protected. Only the owning craftsman may complete it, and only once it has been accepted."
+          },
+          "response": [
+            {
+              "name": "200 Success",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 10,\n    \"status\": \"completed\"\n  },\n  \"message\": \"تم إنهاء الطلب بنجاح.\"\n}",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/service-requests/10/complete",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "service-requests",
+                    "10",
+                    "complete"
+                  ]
+                },
+                "description": "Protected. Only the owning craftsman may complete it, and only once it has been accepted."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Review Service Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"خدمة ممتازة والتزام بالموعد\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/service-requests/10/review",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "service-requests",
+                "10",
+                "review"
+              ]
+            },
+            "description": "Protected. Only the customer who sent the request may review it, once, and only after it is completed. Recalculates the craftsman's avg_rating and reviews_count."
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 7,\n    \"service_request_id\": 10,\n    \"customer\": {\n      \"id\": 3,\n      \"full_name\": \"سامي العلي\"\n    },\n    \"rating\": 5,\n    \"comment\": \"خدمة ممتازة والتزام بالموعد\",\n    \"created_at\": \"2026-10-04T12:00:00.000000Z\"\n  },\n  \"message\": \"تم إرسال التقييم بنجاح.\"\n}",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rating\": 5,\n  \"comment\": \"خدمة ممتازة والتزام بالموعد\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/service-requests/10/review",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "service-requests",
+                    "10",
+                    "review"
+                  ]
+                },
+                "description": "Protected. Only the customer who sent the request may review it, once, and only after it is completed. Recalculates the craftsman's avg_rating and reviews_count."
+              }
+            },
+            {
+              "name": "422 Already reviewed / not completed",
+              "status": "Unprocessable Content",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"تم تقييم هذا الطلب مسبقاً.\",\n  \"errors\": []\n}",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rating\": 5,\n  \"comment\": \"خدمة ممتازة والتزام بالموعد\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/service-requests/10/review",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "service-requests",
+                    "10",
+                    "review"
+                  ]
+                },
+                "description": "Protected. Only the customer who sent the request may review it, once, and only after it is completed. Recalculates the craftsman's avg_rating and reviews_count."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Contact",
+      "item": [
+        {
+          "name": "Submit Contact Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"أحمد خالد\",\n  \"city\": \"غزة\",\n  \"email\": \"ahmad@example.com\",\n  \"subject\": \"general\",\n  \"message\": \"استفسار عن الخدمات المتاحة على المنصة\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/contact",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "contact"
+              ]
+            },
+            "description": "Public. \"email\" is required for a guest only — a logged-in user's email is taken from their account automatically (send the Authorization header and omit email). subject is one of: general, complaint, suggestion, support, partnership. Sends an admin notification email via Brevo on success."
+          },
+          "response": [
+            {
+              "name": "201 Success",
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": [],\n  \"message\": \"تم إرسال رسالتك بنجاح، سنتواصل معك قريباً.\"\n}",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"full_name\": \"أحمد خالد\",\n  \"city\": \"غزة\",\n  \"email\": \"ahmad@example.com\",\n  \"subject\": \"general\",\n  \"message\": \"استفسار عن الخدمات المتاحة على المنصة\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/contact",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "contact"
+                  ]
+                },
+                "description": "Public. \"email\" is required for a guest only — a logged-in user's email is taken from their account automatically (send the Authorization header and omit email). subject is one of: general, complaint, suggestion, support, partnership. Sends an admin notification email via Brevo on success."
+              }
+            },
+            {
+              "name": "422 Missing email for a guest",
+              "status": "Unprocessable Content",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"البريد الإلكتروني مطلوب.\",\n  \"errors\": {\n    \"email\": [\n      \"البريد الإلكتروني مطلوب.\"\n    ]\n  }\n}",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"full_name\": \"أحمد خالد\",\n  \"city\": \"غزة\",\n  \"email\": \"ahmad@example.com\",\n  \"subject\": \"general\",\n  \"message\": \"استفسار عن الخدمات المتاحة على المنصة\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/contact",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "contact"
+                  ]
+                },
+                "description": "Public. \"email\" is required for a guest only — a logged-in user's email is taken from their account automatically (send the Authorization header and omit email). subject is one of: general, complaint, suggestion, support, partnership. Sends an admin notification email via Brevo on success."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
