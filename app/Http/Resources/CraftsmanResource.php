@@ -22,7 +22,6 @@ class CraftsmanResource extends JsonResource
             ]),
             'personal_photo_path' => $this->personal_photo_path,
             'bio' => $this->bio,
-            'years_experience' => $this->years_experience,
             'governorate_id' => $this->user->governorate_id,
             'area_id' => $this->user->area_id,
             'is_trusted' => $this->status === 'approved',
