@@ -32,7 +32,7 @@ class ProfileController extends Controller
 
             if ($user->role === 'craftsman' && $user->craftsman) {
                 $user->craftsman->update(array_intersect_key($data, array_flip([
-                    'bio', 'personal_photo_path',
+                    'bio', 'personal_photo_path', 'years_experience', 'is_available',
                 ])));
             }
 

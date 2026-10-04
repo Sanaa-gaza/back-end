@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Craftsman extends Model
 {
@@ -17,11 +18,14 @@ class Craftsman extends Model
         'personal_photo_path',
         'id_selfie_path',
         'bio',
+        'years_experience',
         'status',
+        'is_available',
         'rejection_reason',
         'verified_at',
         'verified_by',
         'avg_rating',
+        'reviews_count',
     ];
 
     /**
@@ -37,6 +41,7 @@ class Craftsman extends Model
         return [
             'verified_at' => 'datetime',
             'avg_rating' => 'decimal:2',
+            'is_available' => 'boolean',
         ];
     }
 
@@ -63,5 +68,15 @@ class Craftsman extends Model
     public function serviceAreas(): BelongsToMany
     {
         return $this->belongsToMany(Area::class, 'craftsman_areas');
+    }
+
+    public function serviceRequests(): HasMany
+    {
+        return $this->hasMany(ServiceRequest::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 }

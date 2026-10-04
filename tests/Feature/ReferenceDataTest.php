@@ -57,6 +57,23 @@ class ReferenceDataTest extends TestCase
             ->assertJsonCount(2, 'data');
     }
 
+    public function test_services_list_includes_description_and_image(): void
+    {
+        Service::factory()->create([
+            'is_active' => true,
+            'description' => 'بناء وترميم بأعلى معايير الجودة',
+            'image_path' => 'services/construction.jpg',
+        ]);
+
+        $response = $this->getJson('/api/services');
+
+        $response->assertOk()
+            ->assertJsonFragment([
+                'description' => 'بناء وترميم بأعلى معايير الجودة',
+                'image_path' => 'services/construction.jpg',
+            ]);
+    }
+
     public function test_activity_types_list_only_returns_active_types(): void
     {
         ActivityType::factory()->count(2)->create(['is_active' => true]);
