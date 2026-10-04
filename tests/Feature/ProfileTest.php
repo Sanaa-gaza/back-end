@@ -138,6 +138,22 @@ class ProfileTest extends TestCase
         $response->assertStatus(422)->assertJson(['success' => false]);
     }
 
+    public function test_craftsman_can_update_years_experience_and_availability(): void
+    {
+        $craftsman = Craftsman::factory()->create(['years_experience' => 2, 'is_available' => true]);
+        $user = $craftsman->user;
+
+        $response = $this->putJson('/api/profile', [
+            'years_experience' => 10,
+            'is_available' => false,
+        ], $this->authHeaders($user));
+
+        $response->assertOk();
+        $craftsman->refresh();
+        $this->assertEquals(10, $craftsman->years_experience);
+        $this->assertFalse($craftsman->is_available);
+    }
+
     public function test_contractor_can_update_business_fields(): void
     {
         $contractor = Contractor::factory()->create(['workers_count' => 5]);
